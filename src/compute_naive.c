@@ -27,7 +27,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     end_ptr -= 1;
     start_ptr += 1;
   }
-  uint32_t size_diff = a_matrix->cols - b_ptr;
+  uint32_t size_diff = size_of_a - size_of_b;
   int32_t *res = malloc(sizeof(int32_t) * (size_diff + 1));
   int i = 0;
   for (; i <= size_diff; i++) { 
