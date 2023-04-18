@@ -17,32 +17,30 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
   uint32_t size_of_b = b_matrix->cols; //num rows == 1 
   uint32_t size_of_a = a_matrix->cols;
-  int end_ptr = size_of_b - 1;
+
+
+  int end_ptr = size_of_a - 1;
   int start_ptr = 0;
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
+  
   while (start_ptr < end_ptr) { 
-    int32_t temp = b_ptr[end_ptr];
-    b_ptr[end_ptr] = b_ptr[start_ptr];
-    b_ptr[start_ptr] = temp;
+    int32_t temp = a_ptr[end_ptr];
+    a_ptr[end_ptr] = a_ptr[start_ptr];
+    a_ptr[start_ptr] = temp;
     end_ptr -= 1;
     start_ptr += 1;
   }
   uint32_t size_diff = size_of_a - size_of_b;
   int32_t *res = malloc(sizeof(int32_t) * (size_diff + 1));
-  uint32_t output_rows = malloc(sizeof(uint32_t));
-  uint32_t output_cols = malloc(sizeof(uint32_t));
 
   int i = 0;
   for (; i <= size_diff; i++) { 
     res[i] = dot(size_of_b, a_ptr, b_ptr);
     a_ptr += 1;
   }
-  output_cols = size_diff + 1;
-  output_rows = 1;
+ 
   (*output_matrix)->data = res;
-  (*output_matrix)->rows = output_rows;
-  (*output_matrix)->cols = output_cols;
 
   return 0;
 }
