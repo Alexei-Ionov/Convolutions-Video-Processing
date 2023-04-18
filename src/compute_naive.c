@@ -34,8 +34,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     res[i] = dot(size_of_b, a_ptr, b_ptr);
     a_ptr += 1;
   }
-  (*output_matrix) = res;
-
+  (*output_matrix)->data = res;
 
   return 0;
 }
