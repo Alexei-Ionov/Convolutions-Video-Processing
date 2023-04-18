@@ -35,6 +35,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     a_ptr += 1;
   }
   (*output_matrix)->data = res;
+  (*output_matrix)->cols = size_diff + 1;
+  (*output_matrix)->rows = 1;
 
   return 0;
 }
