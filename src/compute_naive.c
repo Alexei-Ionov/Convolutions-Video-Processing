@@ -3,7 +3,8 @@
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
-  int res, i = 0;
+  int res = 0;
+  int i = 0;
   for (; i < n; i++) { 
     res += (vec1[i] * vec2[i]);
   }
@@ -30,8 +31,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res = malloc(sizeof(int32_t) * (size_diff + 1));
   int i = 0;
   for (; i <= size_diff; i++) { 
-    res[i] = dot(size_of_b, a_ptr, b_ptr);
-    a_ptr += 1;
+    res[i] = dot(size_of_b, a_matrix->data, b_matrix->data);
+    a_matrix->data += 1;
   }
   (*output_matrix)->data = res;
   (*output_matrix)->cols = size_diff + 1;
