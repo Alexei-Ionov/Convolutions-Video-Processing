@@ -18,7 +18,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int start_ptr = 0;
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
-  while (start_ptr <= end_ptr) { 
+  while (start_ptr < end_ptr) { 
     int32_t temp = b_ptr[end_ptr];
     b_ptr[end_ptr] = b_ptr[start_ptr];
     b_ptr[start_ptr] = temp;
