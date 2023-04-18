@@ -14,6 +14,7 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
   uint32_t size_of_b = b_matrix->cols; //num rows == 1 
+  uint32_t size_of_a = a_matrix->cols;
   int end_ptr = size_of_b - 1;
   int start_ptr = 0;
   int32_t *a_ptr = a_matrix->data;
