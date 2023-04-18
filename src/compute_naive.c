@@ -3,15 +3,31 @@
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
-
-  return -1;
+  int res, i = 0;
+  for (; i < n; i++) { 
+    res += (vec1[i] * vec2[i]);
+  }
+  return res;
 }
 
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
-  // output_matrix
-
+  int size_of_b = b_matrix->rows * b_matrix->cols;
+  int end_ptr = size_of_b - 1;
+  int start_ptr = 0;
+  while (start_ptr != end_ptr) { 
+    int temp = b_matrix->data[end_ptr];
+    b_matrix->data[end_ptr] = b_matrix->data[start_ptr];
+    b_matrix->data[start_ptr] = temp;
+    end_ptr -= 1;
+    start_ptr += 1;
+  }
+  int32_t *res = (*output_matrix)->data;
+  int i = 0;
+  for (; i < size_of_b; i++) { 
+    res[i] = dot(size_of_b, a_matrix->data, b_matrix->data);
+  }
   return -1;
 }
 
