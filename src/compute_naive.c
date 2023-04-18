@@ -13,7 +13,7 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
-  int size_of_b = b_matrix->rows * b_matrix->cols;
+  int size_of_b = b_matrix->cols; //num rows == 1 
   int end_ptr = size_of_b - 1;
   int start_ptr = 0;
   while (start_ptr != end_ptr) { 
@@ -25,10 +25,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   }
   int32_t *res = (*output_matrix)->data;
   int i = 0;
+  int32_t *a_ptr = a_matrix->data;
   for (; i < size_of_b; i++) { 
-    res[i] = dot(size_of_b, a_matrix->data, b_matrix->data);
+    res[i] = dot(size_of_b, a_ptr, b_matrix->data);
+    a_ptr += 1;
   }
-  return -1;
+  return 0;
 }
 
 // Executes a task
