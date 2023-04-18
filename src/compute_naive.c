@@ -23,13 +23,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     end_ptr -= 1;
     start_ptr += 1;
   }
-  int32_t *res = (*output_matrix)->data;
-  int i = 0;
-  int32_t *a_ptr = a_matrix->data;
-  for (; i < size_of_b; i++) { 
-    res[i] = dot(size_of_b, a_ptr, b_matrix->data);
-    a_ptr += 1;
-  }
+
   return 0;
 }
 
