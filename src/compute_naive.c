@@ -85,8 +85,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   col = 0;
 
   int index, local = 0;
-  int row_a = 0;
-  
+  print_matrix(a_ptr, num_rows_a, num_cols_a);
+  printf("%s", "                   ");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+
+
   while (index < size_of_res) { 
     for (; col <= col_diff; col++) { 
       if (index >= size_of_res) { 
@@ -109,7 +112,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
   (*output_matrix)->data = res;
   printf("%d", size_of_res);
+  printf("%s", "                   ");
   print_matrix(res, row_diff + 1, col_diff + 1);
+ 
+
+
 
   // 
   return 0;
