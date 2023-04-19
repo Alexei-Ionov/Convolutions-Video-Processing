@@ -10,7 +10,7 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   }
   return res;
 }
-void flip_horizontal(int row, int num_col, int32_t *b) { 
+int flip_horizontal(int row, int num_col, int32_t *b) { 
   int end_ptr = (row * num_col) + num_col - 1;
   int start_ptr = (row * num_col);
   int32_t temp;
@@ -21,8 +21,9 @@ void flip_horizontal(int row, int num_col, int32_t *b) {
     end_ptr -= 1;
     start_ptr += 1;
   }
+  return 0;
 }
-void flip_vertial(int num_rows; int num_col, int col, int32_t *b) {
+int flip_vertial(int num_rows; int num_col, int col, int32_t *b) {
   int start_ptr = col;
   int end_ptr = (num_rows * num_col) + col;
   int32_t temp;
@@ -33,6 +34,7 @@ void flip_vertial(int num_rows; int num_col, int col, int32_t *b) {
     end_ptr -= num_col;
     start_ptr += num_col;
   }
+  return 0;
 }
 
 // Computes the convolution of two matrices
@@ -56,10 +58,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
-  int size_of_res = (col_diff + 1) * (row_diff + 1)
+  int size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res = malloc(sizeof(uint32_t) * (size_of_res));
 
-  row, col, index = 0;
+  int row, col, index = 0;
   int row_a, col_a = 0;
   for (; index < size_of_res; index++) { 
     int local = 0;
@@ -78,7 +80,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     row_a += 1;
   }
   (*output_matrix)->data = res;
-  
+
   return 0;
 }
 
