@@ -21,7 +21,6 @@ void flip_horizontal(int row, int num_col, int32_t *b) {
     end_ptr -= 1;
     start_ptr += 1;
   }
-  return 0;
 }
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
@@ -35,7 +34,6 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
     end_ptr -= num_col;
     start_ptr += num_col;
   }
-  return 0;
 }
 
 
