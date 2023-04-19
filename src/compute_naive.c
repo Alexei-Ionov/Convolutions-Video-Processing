@@ -51,21 +51,21 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix 
   matrix_t *output = malloc(sizeof(matrix_t));
   (*output_matrix) = output;
-  uint32_t num_cols_b = b_matrix-> cols;
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
+  uint32_t num_cols_b = b_matrix-> cols;
   uint32_t num_rows_b = b_matrix-> rows;
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
  
  
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int row = 0;
   for (;row < num_rows_b; row++) { 
     flip_horizontal(row, num_cols_b, b_ptr); 
   }
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int col = 0;
   int end_row = num_rows_b - 1;
@@ -74,7 +74,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
 
   uint32_t row_diff = num_rows_a - num_rows_b;
@@ -106,8 +106,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     col = 0;
     row_a += 1;
   }
-  (*output_matrix)->data = res;
   
+  (*output_matrix)->data = res;
+  print_matrix(res, row_diff + 1, col_diff + 1);
+
+  // 
   return 0;
 }
 
