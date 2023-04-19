@@ -10,6 +10,6 @@ def test_example(test: TestSpec):
 def my_custom_test(test: TestSpec):
     rows_a = 5
     cols_a = 5
-    rows_b = 3
-    cols_b = 3
+    rows_b = 4
+    cols_b = 4
     test.add_task(Task(Matrix.random(rows_a, cols_a), Matrix.random(rows_b, cols_b)))
