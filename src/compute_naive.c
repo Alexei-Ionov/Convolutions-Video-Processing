@@ -94,7 +94,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
 
   while (index < size_of_res) { 
-    for (; col <= col_diff; col++) { 
+    for (; col <= col_diff + 1; col++) { 
       if (index >= size_of_res) { 
         break;
       }
