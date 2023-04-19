@@ -45,45 +45,45 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
   uint32_t num_rows_b = b_matrix-> rows;
-  int row = 0;
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
+
+  int row = 0;
   for (;row < num_rows_b; row++) { 
     flip_horizontal(row, num_cols_b, b_ptr); 
   }
   int col = 0;
-  
+  int end_row = num_rows_b - 1;
   for (; col < num_cols_b; col++) { 
-    flip_vertial(num_rows_b - 1, num_cols_b, col, b_ptr);
+    flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   
-
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   int size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
+  res = malloc(sizeof(int) * size_of_res);
 
-
-  res = (int32_t*) malloc(sizeof(int) * size_of_res);
-
-  row, col = 0;
   int index, local = 0;
-  int row_a, col_a = 0;
+  int row_a = 0;
   
-  for (; index < size_of_res; index++) { 
-    local = 0;
+  while (index < size_of_res) { 
     for (; col <= col_diff; col++) { 
+      if (index >= size_of_res) { 
+        break;
+      }
+      row = 0;
+      local = 0;
       for (; row < num_rows_b; row++) {
-        local += dot(num_cols_b, &(a_ptr[(row_a * num_cols_a) + col_a]), b_ptr);
+        local += dot(num_cols_b, &(a_ptr[(row_a * num_cols_a) + col]), b_ptr);
         row_a += 1;
         b_ptr += num_cols_b;
       }
       b_ptr = b_matrix-> data;
-      col_a += 1;
+      res[index] = local;
+      index += 1;
     }
     col = 0;
-    col_a = 0;
-    res[index] = local;
     row_a += 1;
   }
   (*output_matrix)->data = res;
