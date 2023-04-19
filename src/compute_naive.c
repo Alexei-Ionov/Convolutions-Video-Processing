@@ -36,6 +36,15 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
   }
 }
 
+void print_matrix(int* matrix, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", *(matrix + i * cols + j));
+        }
+        printf("\n");
+    }
+}
+
 
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
@@ -50,17 +59,24 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *b_ptr = b_matrix->data;
  
  
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int row = 0;
   for (;row < num_rows_b; row++) { 
     flip_horizontal(row, num_cols_b, b_ptr); 
   }
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+
   int col = 0;
   int end_row = num_rows_b - 1;
+
   for (; col < num_cols_b; col++) { 
     flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+
+
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   int size_of_res = (col_diff + 1) * (row_diff + 1);
