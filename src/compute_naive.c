@@ -64,7 +64,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   row, col = 0;
   int index, local = 0;
-  int row_a, col_a = 0;c
+  int row_a, col_a = 0;
   
   for (; index < size_of_res; index++) { 
     local = 0;
