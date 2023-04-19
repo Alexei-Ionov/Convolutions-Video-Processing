@@ -52,14 +52,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     flip_horizontal(row, num_cols_b, b_ptr); 
   }
   int col = 0;
-  for (; col < num_cols_b; col++) { 
-    flip_vertial(num_rows_b, num_cols_b, col, b_ptr);
-  }
+  
 
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
-  uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
+  int size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
+
+
   res = (int32_t*) malloc(sizeof(int) * size_of_res);
 
   row, col = 0;
