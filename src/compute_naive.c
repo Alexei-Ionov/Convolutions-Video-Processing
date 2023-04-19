@@ -60,13 +60,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t col_diff = num_cols_a - num_cols_b;
   int size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
-  res = (int32_t*) malloc(sizeof(int) * size_of_res);
 
   row, col = 0;
   int index, local = 0;
   int row_a, col_a = 0;
   
-  (*output_matrix)->data = res;
+
 
   return 0;
 }
