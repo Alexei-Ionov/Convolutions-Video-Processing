@@ -23,7 +23,7 @@ int flip_horizontal(int row, int num_col, int32_t *b) {
   }
   return 0;
 }
-int flip_vertial(int num_rows; int num_col, int col, int32_t *b) {
+int flip_vertial(int num_rows, int num_col, int col, int32_t *b) {
   int start_ptr = col;
   int end_ptr = (num_rows * num_col) + col;
   int32_t temp;
