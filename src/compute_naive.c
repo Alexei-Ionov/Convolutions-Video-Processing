@@ -49,11 +49,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
   int l = 0;
+  printf("%s", "printing a: ");
   for (; l < (num_cols_a * num_rows_a); l++) { 
-    printf("%d", a_ptr[l]);
+    printf("%s", " ");
   }
   int n = 0;
+  printf("%s", "printing b: ");
   for (; n < (num_cols_b * num_rows_b); n++) { 
+    printf("%s", " ");
     printf("%d", b_ptr[n]);
   }
 
