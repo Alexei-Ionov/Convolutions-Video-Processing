@@ -82,6 +82,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
   res = malloc(sizeof(int) * size_of_res);
+  col = 0;
 
   int index, local = 0;
   int row_a = 0;
