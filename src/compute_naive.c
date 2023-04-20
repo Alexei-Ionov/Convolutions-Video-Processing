@@ -100,7 +100,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
       row = 0;
       local = 0;
-      int row_a2 = row_a
+      int row_a2 = row_a;
       for (; row < num_rows_b; row++) {
         local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), b_ptr);
         row_a2 += 1
