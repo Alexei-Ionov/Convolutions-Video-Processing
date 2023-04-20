@@ -50,11 +50,16 @@ void print_matrix(int* matrix, int rows, int cols) {
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix 
   *output_matrix = malloc(sizeof(matrix_t));
-  int32_t *out_ptr = *output_matrix->data;
+
+  int32_t *out_ptr = (*output_matrix);
+
+
+
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
   uint32_t num_cols_b = b_matrix-> cols;
   uint32_t num_rows_b = b_matrix-> rows;
+
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
  
@@ -79,8 +84,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
 
-  res = malloc(sizeof(int32_t) * size_of_res);
-  
+  // res = malloc(sizeof(int32_t) * size_of_res);
+  out_ptr->cols = col_diff + 1;
+  out_ptr->rows = row_diff + 1;
+  out_ptr->data = malloc(sizeof(int32_t) * size_of_res)
+
+
   uint32_t row_a = 0;
   col = 0;
   int index = 0;
