@@ -96,7 +96,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int i, j, m, n;
   int kcenter_row = num_rows_b / 2;
   int kcenter_col = num_cols_b / 2;
-  int sum;
+  int32_t sum;
 
   for (i = 0; i < num_rows_a - num_rows_b + 1; i++) {
       for (j = 0; j < num_cols_a - num_cols_b + 1; j++) {
