@@ -87,22 +87,22 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t local;
   int b_ptr_index;
 
-  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-  //   col = 0;
-  //   for (; col <= col_diff; col++) { 
-  //     row = 0;
-  //     local = 0;
-  //     int row_a2 = row_a;
-  //     b_ptr_index = 0;
-  //     for (; row < num_rows_b; row++) {
-  //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-  //       row_a2 += 1;
-  //       b_ptr_index += num_cols_b;
-  //     }
-  //     res[index] = local;
-  //     index += 1;
-  //   }
-  // }
+  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+    col = 0;
+    for (; col <= col_diff; col++) { 
+      row = 0;
+      local = 0;
+      int row_a2 = row_a;
+      b_ptr_index = 0;
+      for (; row < num_rows_b; row++) {
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+        row_a2 += 1;
+        b_ptr_index += num_cols_b;
+      }
+      res[index] = local;
+      index += 1;
+    }
+  }
   
   output->data = res;
   (*output_matrix) = output;
