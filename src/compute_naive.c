@@ -92,6 +92,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   col = 0;
   int index = 0;
   int32_t local;
+  int32_t *b_copy = b_ptr;
+
   
 
   while (index < size_of_res) { 
@@ -107,7 +109,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         row_a2 += 1;
         b_ptr += num_cols_b;
       }
-      b_ptr = b_matrix-> data;
+      b_ptr = b_copy;
       res[index] = local;
       index += 1;
     }
