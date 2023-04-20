@@ -81,7 +81,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   res = malloc(sizeof(int32_t) * size_of_res);
   
-  int row_a = 0;
+  u_int32_t row_a = 0;
   col = 0;
   int index = 0;
   int32_t local;
@@ -102,7 +102,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       res[index] = local;
       index += 1;
     }
-  
   }
   
   output->data = res;
