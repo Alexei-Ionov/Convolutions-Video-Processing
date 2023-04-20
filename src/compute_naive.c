@@ -74,7 +74,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
 
   uint32_t row_diff = num_rows_a - num_rows_b;
@@ -83,55 +82,35 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
   res = malloc(sizeof(int32_t) * size_of_res);
   
-  
-  // print_matrix(a_ptr, num_rows_a, num_cols_a);
-  // printf("%s", "\n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
   int row_a = 0;
   col = 0;
   int index = 0;
   int32_t local;
-  int32_t *b_copy = b_ptr;
+  int b_ptr_index;
 
-  
-
-  while (index < size_of_res) { 
+  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+    col = 0;
     for (; col <= col_diff; col++) { 
-      if (index >= size_of_res) { 
-        break;
-      }
       row = 0;
       local = 0;
       int row_a2 = row_a;
+      b_ptr_index = 0;
       for (; row < num_rows_b; row++) {
-        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), b_ptr);
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
         row_a2 += 1;
-        b_ptr += num_cols_b;
+        b_ptr_index += num_cols_b;
       }
-      b_ptr = b_copy;
       res[index] = local;
       index += 1;
     }
-    col = 0;
-    row_a += 1;
+  
   }
-  //   for (i = 0; i < input_rows - kernel_rows + 1; i++) {
-  //     for (j = 0; j < input_cols - kernel_cols + 1; j++) {
-  //         sum = 0;
-  //         for (m = 0; m < kernel_rows; m++) {
-  //             for (n = 0; n < kernel_cols; n++) {
-  //                 sum += input[i + m][j + n] * kernel[m][n];
-  //             }
-  //         }
-  //         output[i][j] = sum;
-  //     }
-  // }
+  
   output->data = res;
   // printf("%d", size_of_res);
   // printf("%s", "\n");
   // print_matrix(res, row_diff + 1, col_diff + 1);
  
-  // 
   return 0;
 }
 
