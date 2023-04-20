@@ -49,9 +49,9 @@ void print_matrix(int* matrix, int rows, int cols) {
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix 
-  matrix_t *out = malloc(sizeof(matrix_t));
-  *output_matrix = out;
-  int32_t *res = malloc(sizeof(int32_t));
+  matrix_t *output = malloc(sizeof(matrix_t));
+
+  
 
 
 
@@ -84,11 +84,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
 
-  // res = malloc(sizeof(int32_t) * size_of_res);
-  out_ptr->cols = col_diff + 1;
-  out_ptr->rows = row_diff + 1;
-  out_ptr->data = malloc(sizeof(int32_t) * size_of_res)
-
+  res = malloc(sizeof(int32_t) * size_of_res);
+  
 
   uint32_t row_a = 0;
   col = 0;
@@ -130,8 +127,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   }
   // }
   
-  // output->data = res;
-  // (*output_matrix) = output;
+  output->data = res;
+  (*output_matrix) = &output;
   for (int y = 0; y < size_of_res; y++) { 
     out_ptr[y] = 99;
   }
