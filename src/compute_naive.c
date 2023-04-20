@@ -130,7 +130,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   output->data = res;
   (*output_matrix) = &output;
   for (int y = 0; y < size_of_res; y++) { 
-    out_ptr[y] = 99;
+    res[y] = 99;
   }
 
   // printf("%d", size_of_res);
