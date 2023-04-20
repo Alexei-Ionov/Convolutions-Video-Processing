@@ -129,9 +129,9 @@ int execute_task(task_t *task) {
 
   free(a_matrix->data);
   free(b_matrix->data);
-  free(output_matrix->data);
+  // free(output_matrix->data);
   free(a_matrix);
   free(b_matrix);
-  free(output_matrix);
+  // free(output_matrix);
   return 0;
 }
