@@ -12,4 +12,5 @@ def my_custom_test(test: TestSpec):
     cols_a = 3
     rows_b = 2
     cols_b = 2
-    test.add_task(Task(Matrix.random(rows_a, cols_a), Matrix.random(rows_b, cols_b)))
+
+    test.add_task(Task(Matrix.random(rows_a, cols_a, min_value=0, max_value = 5), Matrix.random(rows_b, cols_b, min_value=0, max_value= 5)))
