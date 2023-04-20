@@ -86,7 +86,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int index = 0;
   int32_t local;
   int b_ptr_index;
-    
+  res[0] = 99;
   //   int i, j, m, n;
   //   int kcenter_row = num_rows_b / 2;
   //   int kcenter_col = num_cols_b / 2;
@@ -122,7 +122,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // }
   
   output->data = res;
-  (*output_matrix) = a_matrix;
+  (*output_matrix) = output;
 
   // printf("%d", size_of_res);
   // printf("%s", "\n");
