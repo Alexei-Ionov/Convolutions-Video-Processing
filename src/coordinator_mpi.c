@@ -30,14 +30,14 @@ int main(int argc, char *argv[]) {
     // TODO: loop until we've completed `numTasks`
     while (numTasks) {
         // TODO: receive a message from any source (so we know that this node is done with its task)
-        MPI_Recv(&message, 1, MPI_INT32_T, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-        // TODO: get the source process using the `status` struct
-        int source = status.MPI_SOURCE;
-        message = nextTask;
-        MPI_Send(&message, 1, MPI_INT32_T, source, 0, MPI_COMM_WORLD);
-        // TODO: send `nextTask` as the message to the process we just received a message from
-        nextTask += 1;
-        numTasks -= 1;
+      MPI_Recv(&message, 1, MPI_INT32_T, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+      // TODO: get the source process using the `status` struct
+      int source = status.MPI_SOURCE;
+      message = nextTask;
+      MPI_Send(&message, 1, MPI_INT32_T, source, 0, MPI_COMM_WORLD);
+      // TODO: send `nextTask` as the message to the process we just received a message from
+      nextTask += 1;
+      numTasks -= 1;
     }
     for (int i = 0; i < totalProcs - 1; i++) {
           // TODO: receive a message from any source (so we know that this node is done with its task)
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
       printf("Task %d failed\n", i);
       return -1;
       }
-      free(tasks[i]->path);
+      free(tasks[message]->path);
       }
   }
   free(tasks);
