@@ -2,9 +2,11 @@
 #include <x86intrin.h>
 
 #include "compute.h"
+#define THRESHOLD 40
 
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
+  
   // TODO: implement dot product of vec1 and vec2, both of size n
   __m256 res = _mm256_set_ps(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   u_int32_t cut_off = n - (n % 8);
@@ -29,7 +31,21 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   return (int) (final + res[0] + res[1] + res[2] + res[3] + res[4] + res[5] + res[6] + res[7]);
 }
 
-void flip_horizontal(int n, int row, int32_t *b_ptr) { 
+void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
+  int end_ptr = (row * num_col) + num_col - 1;
+  int start_ptr = (row * num_col);
+  int32_t temp;
+  while (start_ptr < end_ptr) { 
+    temp = b[end_ptr];
+    b[end_ptr] = b[start_ptr];
+    b[start_ptr] = temp;
+    end_ptr -= 1;
+    start_ptr += 1;
+  }
+}
+
+
+void flip_horizontal_threaded(int n, int row, int32_t *b_ptr) { 
   // n == half size of the arrray
   #pragma omp parallel 
   {
@@ -38,17 +54,16 @@ void flip_horizontal(int n, int row, int32_t *b_ptr) {
     int work = (n / num_threads);
     int start = thread_num * work;
     int finish = start + work;
-    if (start < n) { 
-      if (finish >= n) { 
-        finish = n;
-      }
-      for (; start < finish; start++) { 
-        int diff = n - start;
-        int temp = b_ptr[n + diff];
-        b_ptr[n + diff] = b_ptr[start];
-        b_ptr[start] = temp;
-      }
+    if (finish >= n) { 
+      finish = n;
     }
+    for (; start < finish; start++) { 
+      int diff = n - start;
+      int temp = b_ptr[n + diff];
+      b_ptr[n + diff] = b_ptr[start];
+      b_ptr[start] = temp;
+    }
+  
   }
 }
 
@@ -84,8 +99,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int row = 0;
+  uint32_t half = num_cols_b / 2;
+
   for (;row < num_rows_b; row++) { 
-    flip_horizontal(num_cols_b, row, b_ptr); 
+    if (num_cols_b < THRESHOLD) { 
+      flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
+    } else { 
+      flip_horizontal_threaded(half, row, &(b_ptr[row * num_cols_b])); 
+    }
   }
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
@@ -117,12 +138,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       local = 0;
       int row_a2 = row_a;
       b_ptr_index = 0;
-      #pragma omp parallel { 
+      #pragma omp parallel 
+      { 
         #pragma omp for reduction(+:local,row_a2,b_ptr_index)
-          local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-          row_a2 += 1;
-          b_ptr_index += num_cols_b;
-        }
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+        row_a2 += 1;
+        b_ptr_index += num_cols_b;
+      }
     }
     res[index] = local;
     index += 1;
