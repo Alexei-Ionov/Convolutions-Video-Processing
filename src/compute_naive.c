@@ -92,49 +92,32 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int index = 0;
   int32_t local;
   int b_ptr_index;
-  
-  int i, j, m, n;
-  int kcenter_row = num_rows_b / 2;
-  int kcenter_col = num_cols_b / 2;
-  int32_t sum;
 
-  for (i = 0; i < num_rows_a - num_rows_b + 1; i++) {
-      for (j = 0; j < num_cols_a - num_cols_b + 1; j++) {
-          sum = 0;
-          for (m = 0; m < num_rows_b; m++) {
-              for (n = 0; n < num_cols_b; n++) {
-                  sum += a_ptr[(i + m)*num_rows_a + (j + n)] * b_ptr[(m*num_rows_b) + n];
-              }
-          }
-          res[i*(row_diff + 1) + j] = sum;
+  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+    col = 0;
+    for (; col <= col_diff; col++) { 
+      row = 0;
+      local = 0;
+      int row_a2 = row_a;
+      b_ptr_index = 0;
+      for (; row < num_rows_b; row++) {
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+        row_a2 += 1;
+        b_ptr_index += num_cols_b;
       }
+      res[index] = local;
+      index += 1;
+    }
   }
-
-  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-  //   col = 0;
-  //   for (; col <= col_diff; col++) { 
-  //     row = 0;
-  //     local = 0;
-  //     int row_a2 = row_a;
-  //     b_ptr_index = 0;
-  //     for (; row < num_rows_b; row++) {
-  //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-  //       row_a2 += 1;
-  //       b_ptr_index += num_cols_b;
-  //     }
-  //     res[index] = local;
-  //     index += 1;
-  //   }
-  // }
   
   output->data = res;
   (*output_matrix) = output;
   // printf("%d", size_of_res);
   // printf("%s", "\n");
-  print_matrix((*output_matrix)->data, row_diff + 1, col_diff + 1);
+
   print_matrix(a_ptr, num_rows_a, num_cols_a);
   print_matrix(b_ptr, num_rows_b, num_cols_b);
-  // print_matrix((*output_matrix)->data, row_diff + 1, col_diff + 1);
+  print_matrix((*output_matrix)->data, row_diff + 1, col_diff + 1);
   return 0;
 }
 
