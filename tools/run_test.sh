@@ -22,4 +22,3 @@ echo "Time elapsed: $((end_time - start_time))ms"
 if [ $return_code -ne 0 ]; then
   exit $return_code
 fi
-bash tools/check_output.sh "${@: -1}"

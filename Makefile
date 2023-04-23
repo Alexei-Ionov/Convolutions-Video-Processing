@@ -67,6 +67,7 @@ ifeq ($(COORDINATOR),mpi)
 else
 	@bash tools/run_test.sh ./convolve_$(COORDINATOR)_$(COMPUTE) $(TEST)/input.txt
 endif
+	@bash tools/check_output.sh $(TEST)
 
 # Clean
 clean:
