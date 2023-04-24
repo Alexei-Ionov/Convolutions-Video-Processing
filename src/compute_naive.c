@@ -109,10 +109,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   output->data = res;
   (*output_matrix) = output;
 
-  //(* output_matrix)->data = res;
-  //(*output_matrix) = output;
-  // printf("%d", size_of_res);
-  // printf("%s", "\n");
   return 0;
 }
 

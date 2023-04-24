@@ -152,13 +152,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   }
   
   output->data = res;
+  output->cols = col_diff + 1;
+  output->rows = row_diff + 1;
   (*output_matrix) = output;
-  // printf("%d", size_of_res);
-  // printf("%s", "\n");
 
-  print_matrix(a_ptr, num_rows_a, num_cols_a);
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-  print_matrix((*output_matrix)->data, row_diff + 1, col_diff + 1);
   return 0;
 }
 
