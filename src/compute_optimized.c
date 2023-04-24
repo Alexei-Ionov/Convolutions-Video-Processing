@@ -10,13 +10,14 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   
   // TODO: implement dot product of vec1 and vec2, both of size n
   __m256 res = _mm256_set_ps(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-  u_int32_t cut_off = n - (n % 8);
+  uint32_t cut_off = n - (n % 8);
   int idx = 0;
-  __m256i vector1;
-  __m256i vector2;
+  __m256 vector1;
+  __m256 vector2;
   while (cut_off) { 
-    vector1 = _mm256_load_si256 ((__m256i const *) vec1);
-    vector2 = _mm256_load_si256 ((__m256i const *) vec2);
+    
+    vector1 = _mm256_load_ps ((float const *) vec1);
+    vector2 = _mm256_load_ps ((float const *) vec2);
     __m256 vector3 = _mm256_mul_ps(vector1, vector2);
     res = _mm256_add_ps(res, vector1);
     vec1 += OFFSET;
@@ -29,7 +30,8 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   for (; j < end; j++) { 
     final += (vec1[j] * vec2[j]);
   }
-  return (int) (final + res[0] + res[1] + res[2] + res[3] + res[4] + res[5] + res[6] + res[7]);
+  int rest = (int) res[0] + (int) res[1] + (int) res[2] + (int) res[3] + (int) res[4] + (int) res[5] + (int) res[6] + (int) res[7];
+  return rest + final;
 }
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
@@ -142,9 +144,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       #pragma omp parallel 
       { 
         #pragma omp for reduction(+:local,row_a2,b_ptr_index)
-        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-        row_a2 += 1;
-        b_ptr_index += num_cols_b;
+          local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+          row_a2 += 1;
+          b_ptr_index += num_cols_b;
       }
     }
     res[index] = local;
