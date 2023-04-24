@@ -49,11 +49,7 @@ void print_matrix(int* matrix, int rows, int cols) {
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix 
-  matrix_t *output = malloc(sizeof(matrix_t));
-
-  
-
-
+  matrix_t *output = (matrix_t *) malloc(sizeof(matrix_t));
 
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
@@ -84,7 +80,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
 
-  res = malloc(sizeof(int32_t) * size_of_res);
+  res = (int32_t *) malloc(sizeof(int32_t) * size_of_res);
   
 
   uint32_t row_a = 0;
@@ -115,9 +111,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // printf("%d", size_of_res);
   // printf("%s", "\n");
 
-  print_matrix(a_ptr, num_rows_a, num_cols_a);
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-  print_matrix((*output_matrix)->data, row_diff + 1, col_diff + 1);
+
   return 0;
 }
 
