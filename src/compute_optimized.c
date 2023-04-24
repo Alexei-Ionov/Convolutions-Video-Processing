@@ -143,12 +143,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       b_ptr_index = 0;
       #pragma omp parallel 
       { 
-        #pragma omp for reduction(+:local,row_a2,b_ptr_index) { 
+        #pragma omp for reduction(+:local,row_a2,b_ptr_index)  
           local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
           row_a2 += 1;
           b_ptr_index += num_cols_b;
-        }
-
+  
       }
       
     }
