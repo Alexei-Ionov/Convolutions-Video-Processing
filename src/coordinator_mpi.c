@@ -61,8 +61,8 @@ int main(int argc, char *argv[]) {
           break;
       }
       if (execute_task(tasks[message])) {
-      printf("Task %d failed\n", i);
-      return -1;
+        printf("Task %d failed\n", i);
+        return -1;
       }
       free(tasks[message]->path);
       }
