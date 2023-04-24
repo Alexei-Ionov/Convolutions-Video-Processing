@@ -3,6 +3,7 @@
 
 #include "compute.h"
 #define THRESHOLD 40
+#define OFFSET 8
 
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
@@ -18,9 +19,9 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
     vector2 = _mm256_load_si256 ((__m256i const *) vec2);
     __m256 vector3 = _mm256_mul_ps(vector1, vector2);
     res = _mm256_add_ps(res, vector1);
-    vec1 += 8;
-    vec2 += 8;
-    cut_off -= 8;
+    vec1 += OFFSET;
+    vec2 += OFFSET;
+    cut_off -= OFFSET;
   }
   int end = n % 8;
   int j = 0;
@@ -45,7 +46,7 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 }
 
 
-void flip_horizontal_threaded(int n, int row, int32_t *b_ptr) { 
+void flip_horizontal_threaded(int n, int32_t *b_ptr) { 
   // n == half size of the arrray
   #pragma omp parallel 
   {
@@ -54,7 +55,7 @@ void flip_horizontal_threaded(int n, int row, int32_t *b_ptr) {
     int work = (n / num_threads);
     int start = thread_num * work;
     int finish = start + work;
-    if (finish >= n) { 
+    if (finish > n) { 
       finish = n;
     }
     for (; start < finish; start++) { 
@@ -105,7 +106,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     if (num_cols_b < THRESHOLD) { 
       flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
     } else { 
-      flip_horizontal_threaded(half, row, &(b_ptr[row * num_cols_b])); 
+      flip_horizontal_threaded(half, &(b_ptr[row * num_cols_b])); 
     }
   }
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
