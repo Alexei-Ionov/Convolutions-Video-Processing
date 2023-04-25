@@ -23,9 +23,9 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 
   uint32_t j = cut_off;
   int final = 0;
-  for (; j < n; j++) { 
-    final += (vec1[j] * vec2[j]);
-  }
+  // for (; j < n; j++) { 
+  //   final += (vec1[j] * vec2[j]);
+  // }
 
   int temp[8];
   _mm256_store_ps ((float *) temp, res);
