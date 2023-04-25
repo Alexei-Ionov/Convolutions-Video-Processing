@@ -53,17 +53,29 @@ void flip(uint32_t size, int32_t *row_ptr) {
   }
 }
 void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
-
-  uint32_t i, j;
+  int i, j;
   int32_t temp;
 
+  // compute transpose of matrix in place
   for (i = 0; i < num_rows; i++) {
-    for (j = i+1; j < num_cols; j++) {
-      temp = b[i*num_cols+j];
-      b[i*num_cols+j] = b[j*num_cols+i];
-      b[j*num_cols+i] = temp;
-    }
+      for (j = i+1; j < num_cols; j++) {
+        temp = *(b + i*num_cols + j);
+        *(b + i*num_cols + j) = *(b + j*num_cols + i);
+        *(b + j*num_cols + i) = temp;
+      }
   }
+}
+
+  // uint32_t i, j;
+  // int32_t temp;
+
+  // for (i = 0; i < num_rows; i++) {
+  //   for (j = i+1; j < num_cols; j++) {
+  //     temp = b[i*num_cols+j];
+  //     b[i*num_cols+j] = b[j*num_cols+i];
+  //     b[j*num_cols+i] = temp;
+  //   }
+  // }
   // uint32_t row = 0;
   // for (; row < num_rows; row++) { 
   //   uint32_t col = row + 1;
@@ -74,7 +86,7 @@ void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) {
   //     b[(col * num_cols) + row] = temp;
   //   }
   // }
-}
+
 
 
 void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
@@ -134,7 +146,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     flip(num_cols_b, &(b_ptr[col]));
   }
 
-  //transpose(num_cols_b, num_rows_b, b_ptr);
+  transpose(num_cols_b, num_rows_b, b_ptr);
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
