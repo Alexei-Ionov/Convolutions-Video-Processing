@@ -7,39 +7,29 @@
 
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
-  int32_t res = 0;
-  int i = 0;
-  for (; i < n; i++) { 
-    res += (vec1[i] * vec2[i]);
-  }
-  return res;
-  }
-  
   // TODO: implement dot product of vec1 and vec2, both of size n
-  // __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
-  // uint32_t cut_off = n - (n % 8);
-  // int idx = 0;
-  // __m256i vector1, vector2;
-  // uint32_t i = 0;
-  // for (; i < cut_off; i += 8) { 
-  //   //__m256i _mm256_loadu_si256 (__m256i const * mem_addr)
-  //   vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
-  //   vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
-  //   vector1 = _mm256_mul_epi32(vector1, vector2);
-  //   res = _mm256_add_epi32(res, vector1);
-  // }
+  __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
+  uint32_t cut_off = n - (n % 8);
+  int idx = 0;
+  __m256i vector1, vector2;
+  uint32_t i = 0;
+  for (; i < cut_off; i += 8) { 
+    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
+    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
+    vector1 = _mm256_mul_epi32(vector1, vector2);
+    res = _mm256_add_epi32(res, vector1);
+  }
 
-  // uint32_t j = cut_off;
-  // int32_t final = 0;
-  // for (; j < n; j++) { 
-  //   final += (vec1[j] * vec2[j]);
-  // }
+  uint32_t j = cut_off;
+  int32_t final = 0;
+  for (; j < n; j++) { 
+    final += (vec1[j] * vec2[j]);
+  }
 
-  // int temp[8];
-  // //void _mm256_store_epi32 (void* mem_addr, __m256i a)
-  // _mm256_storeu_si256((__m256i *) temp, res);
-  // //_mm256_store_epi32 ((__m256i *) temp, res);
-  // return final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7];
+  int32_t temp[8];
+  _mm256_storeu_si256((__m256i *) temp, res);
+
+  return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
