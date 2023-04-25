@@ -40,7 +40,7 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // _mm256_storeu_si256((__m256i *) temp, res);
   // //_mm256_store_epi32 ((__m256i *) temp, res);
   // return final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7];
-}
+
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
   int end_ptr = (row * num_col) + num_col - 1;
