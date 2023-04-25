@@ -4,7 +4,7 @@
 #include "compute.h"
 #define THRESHOLD 40
 #define OFFSET 8
-
+#define MAX(a,b) (((a)>(b))?(a):(b))
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
@@ -66,7 +66,7 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
       row_ptr[n + diff] = row_ptr[start];
       row_ptr[start] = temp;
     }
-    furthest_completed = max(furthest_completed, finish);
+    furthest_completed = MAX(furthest_completed, finish);
   }
   for (; furthest_completed < n; furthest_completed++) { 
     int diff = n - furthest_completed;
