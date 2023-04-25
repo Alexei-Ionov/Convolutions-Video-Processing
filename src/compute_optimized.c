@@ -28,7 +28,7 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   }
 
   int temp[8];
-  _mm256_store_ps((float *) temp, res);
+  //_mm256_store_ps((float *) temp, res);
   //float rest = (temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
   //return rest + final;
   return final;
