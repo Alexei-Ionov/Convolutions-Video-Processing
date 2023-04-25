@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     int32_t message;
 
     // TODO: loop until we've completed `numTasks`
-    while (numTasks) {
+    while (num_tasks) {
         // TODO: receive a message from any source (so we know that this node is done with its task)
       MPI_Recv(&message, 1, MPI_INT32_T, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
       // TODO: get the source process using the `status` struct
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
           break;
       }
       if (execute_task(tasks[message])) {
-        printf("Task %d failed\n", i);
+        printf("Task %d failed\n", message);
         return -1;
       }
       free(tasks[message]->path);
