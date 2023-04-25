@@ -131,7 +131,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
   
   // boost performance by multithreading
-  // int end_row = num_rows_b - 1;
+  int end_row = num_rows_b - 1;
   // for (int row = 0; row < num_rows_b; row++) { 
   //   if (num_cols_b > 0) { 
   //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
