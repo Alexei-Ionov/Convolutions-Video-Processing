@@ -101,15 +101,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   int row = 0;
   uint32_t half = num_cols_b >> 1;
+  printf("%d", num)
 
   for (;row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
-
-    // if (num_cols_b < THRESHOLD) { 
-    //   flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
-    // } else { 
-    //   flip_horizontal_threaded(half, &(b_ptr[row * num_cols_b])); 
-    // }
+   // flip_horizontal_naive(row, num_cols_b, b_ptr);
+    if (num_cols_b < THRESHOLD) { 
+      flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
+    } else { 
+      flip_horizontal_threaded(half, &(b_ptr[row * num_cols_b])); 
+    }
   }
   int col = 0;
   int end_row = num_rows_b - 1;
