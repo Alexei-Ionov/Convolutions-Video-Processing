@@ -112,18 +112,25 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
   // boost performance by multithreading
   int end_row = num_rows_b - 1;
-  #pragma omp parallel 
-  {
-    #pragma omp for
-    for (int row = 0; row < num_rows_b; row++) { 
-      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
-    }
-    #pragma omp barrier
-    #pragma omp for 
-    for (int col = 0; col < num_cols_b; col++) { 
-      flip_vertial(end_row, num_cols_b, col, b_ptr);
-    }
+  for (int row = 0; row < num_rows_b; row++) { 
+    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
   }
+  for (int col = 0; col < num_cols_b; col++) { 
+    flip_vertial(end_row, num_cols_b, col, b_ptr);
+  }
+
+  // #pragma omp parallel 
+  // {
+  //   #pragma omp for
+  //   for (int row = 0; row < num_rows_b; row++) { 
+  //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+  //   }
+  //   #pragma omp barrier
+  //   #pragma omp for 
+  //   for (int col = 0; col < num_cols_b; col++) { 
+  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
+  //   }
+  // }
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
