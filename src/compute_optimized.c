@@ -146,6 +146,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   res[index] = local;
   //   index += 1;
   // }
+  int col;
+
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
     for (; col <= col_diff; col++) { 
