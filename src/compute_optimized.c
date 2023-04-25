@@ -1,6 +1,6 @@
 #include <omp.h>
 #include <x86intrin.h>
-
+#include <immintrin.h>
 #include "compute.h"
 #define THRESHOLD 40
 #define OFFSET 8
