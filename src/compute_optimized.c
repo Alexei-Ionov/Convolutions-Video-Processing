@@ -102,6 +102,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
   uint32_t half = num_cols_b >> 1;
   printf("%d", num_cols_b);
+  printf("%s", "\n");
 
   for (;row < num_rows_b; row++) { 
    // flip_horizontal_naive(row, num_cols_b, b_ptr);
