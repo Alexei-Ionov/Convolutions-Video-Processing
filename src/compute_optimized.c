@@ -58,7 +58,7 @@ void flip_horizontal_threaded(int n, int32_t *b_ptr) {
     if (finish > n) { 
       finish = n;
     }
-    for (; start < finish; start++) { 
+    for (; start <= finish; start++) { 
       int diff = n - start;
       int temp = b_ptr[n + diff];
       b_ptr[n + diff] = b_ptr[start];
