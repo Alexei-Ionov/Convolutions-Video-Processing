@@ -33,18 +33,15 @@ return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] 
 
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
-  #pragma omp parallel 
-  {
-    int end_ptr = (row * num_col) + num_col - 1;
-    int start_ptr = (row * num_col);
-    int32_t temp;
-    while (start_ptr < end_ptr) { 
-      temp = b[end_ptr];
-      b[end_ptr] = b[start_ptr];
-      b[start_ptr] = temp;
-      end_ptr -= 1;
-      start_ptr += 1;
-      }
+  int end_ptr = (row * num_col) + num_col - 1;
+  int start_ptr = (row * num_col);
+  int32_t temp;
+  while (start_ptr < end_ptr) { 
+    temp = b[end_ptr];
+    b[end_ptr] = b[start_ptr];
+    b[start_ptr] = temp;
+    end_ptr -= 1;
+    start_ptr += 1;
   }
 }
 
@@ -96,11 +93,24 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   int row = 0;
   for (; row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
+    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
   }
-  int col = 0;
-  for (; col < num_cols_b; col++) { 
-     flip_vertial(end_row, num_cols_b, col, b_ptr);
+  #pragma omp parallel 
+  {
+
+    #pragma omp for
+    for (int col = 0; col < num_cols_b; col++) { 
+      int start = col;
+      int end = (row * num_cols_b) + col;
+      int32_t temp;
+      while (start < end) { 
+        temp = b_ptr[end];
+        b_ptr[end] = b_ptr[start];
+        b_ptr[start] = temp;
+        end -= num_col;
+        start += num_col;
+      }
+    }
   }
 
 
