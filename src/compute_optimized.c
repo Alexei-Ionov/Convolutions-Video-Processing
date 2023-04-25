@@ -108,7 +108,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   {
     #pragma omp for
     for (int row = 0; row < num_rows_b; row++) { 
-      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]))
+      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
     }
     #pragma omp barrier
     #pragma omp for 
