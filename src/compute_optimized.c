@@ -149,7 +149,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   transpose(num_rows_b, num_cols_b, b_ptr);
   printf("%s", "after: \n");
-  print_matrix(b_ptr, num_cols_b, num_rows_b);
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  
 
 
   int col = 0;
