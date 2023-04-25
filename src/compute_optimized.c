@@ -47,57 +47,17 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 
 
 void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
-  uint32_t half = size / 2;
+  int half = size / 2;
   #pragma omp parallel 
   {
     #pragma omp parallel for 
-    for (uint32_t index = 0; index < half; index++) { 
+    for (int index = 0; index < half; index++) { 
     int32_t temp = row_ptr[index];
     row_ptr[index] = row_ptr[size - index - 1];
     row_ptr[size - index - 1] = temp;
     }
   }
 }
-
-  // n == half size of the arrray
-  // int furthest_completed = (n / 8) * 8;
-  // int end = 2 * n;
-  // for (int i = 0; i < end; i++) { 
-  //   printf("%d", row_ptr[i]);
-  //   printf("%s", " ");
-  // }
-  // printf("%s", "\n");
-
-  
-  // #pragma omp parallel 
-  // {
-  //   int thread_num = omp_get_thread_num(); 
-  //   int num_threads = omp_get_num_threads();
-  //   int work = (n / num_threads);
-    
-  //   int start = thread_num * work;
-  //   int finish = start + work;
-    
-  //   if (finish > n) { 
-  //     finish = n;
-  //   }
-  //   for (; start <= finish; start++) { 
-  //     int diff = n - start;
-  //     int temp = row_ptr[n + diff];
-  //     row_ptr[n + diff] = row_ptr[start];
-  //     row_ptr[start] = temp;
-  //   } 
-  // }
-  // for (; furthest_completed <= n; furthest_completed++) { 
-  //   int diff = n - furthest_completed;
-  //   int temp = row_ptr[n + diff];
-  //   row_ptr[n + diff] = row_ptr[furthest_completed];
-  //   row_ptr[furthest_completed] = temp;  
-  // }
-  // for (int i = 0; i < end; i++) { 
-  //   printf("%d", row_ptr[i]);
-  //   printf("%s", " ");
-  // }
 
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
