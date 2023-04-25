@@ -113,7 +113,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // boost performance by multithreading
   int end_row = num_rows_b - 1;
   for (int row = 0; row < num_rows_b; row++) { 
-    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+    if (num_cols_b > THRESHOLD) { 
+      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+    } else { 
+      flip_horizontal_naive(row, num_cols_b, b_ptr);
+    }
   }
   for (int col = 0; col < num_cols_b; col++) { 
     flip_vertial(end_row, num_cols_b, col, b_ptr);
