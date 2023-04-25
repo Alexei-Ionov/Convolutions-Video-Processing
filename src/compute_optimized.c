@@ -44,6 +44,14 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
     start_ptr += 1;
   }
 }
+void flip(uint32_t size, int32_t *row_ptr) { 
+  u_int32_t half = size;
+  for (int index = 0; index < half; index++) { 
+    int32_t temp = row_ptr[index];
+    row_ptr[index] = row_ptr[size - index - 1];
+    row_ptr[size - index - 1] = temp;
+  }
+}
 void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
   uint32_t row = 0;
   for (; row < num_rows; row++) { 
@@ -105,12 +113,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   int row = 0;
   for (; row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
+    flip(num_cols_b, &(b_ptr[row]));
   }
   transpose(num_rows_b, num_cols_b, b_ptr);
   int col = 0;
   for (; col < num_cols_b; col++) { 
-    flip_horizontal_naive(col, num_cols_b, b_ptr);
+    flip(num_cols_b, &(b_ptr[col]));
   }
   transpose(num_rows_b, num_cols_b, b_ptr);
   
