@@ -26,7 +26,10 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   for (; j < n; j++) { 
     final += (vec1[j] * vec2[j]);
   }
-  int rest = (int) res[0] + (int) res[1] + (int) res[2] + (int) res[3] + (int) res[4] + (int) res[5] + (int) res[6] + (int) res[7];
+
+  int temp[8];
+  _mm256_store_ps ((float *) temp , res);
+  int rest = (int) (temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
   return rest + final;
 }
 
@@ -101,15 +104,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t half = num_cols_b / 2;
 
   for (;row < num_rows_b; row++) { 
-    
     if (num_cols_b < THRESHOLD) { 
       flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
     } else { 
       flip_horizontal_threaded(half, &(b_ptr[row * num_cols_b])); 
     }
   }
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-
   int col = 0;
   int end_row = num_rows_b - 1;
 
@@ -123,7 +123,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  
 
   uint32_t row_a = 0;
   col = 0;
@@ -159,8 +158,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       int row_a2 = row_a;
       b_ptr_index = 0;
       for (; row < num_rows_b; row++) {
-        //local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-        local += 1;
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
         row_a2 += 1;
         b_ptr_index += num_cols_b;
       }
