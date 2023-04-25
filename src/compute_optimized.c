@@ -59,14 +59,15 @@ void flip(uint32_t size, int32_t *row_ptr) {
   }
 }
 void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
-  uint32_t i, j;
-  int32_t temp;
-  for (i = 0; i < num_rows; i++) {
-      for (j = i+1; j < num_cols; j++) {
-        temp = *(b + i*num_cols + j);
-        *(b + i*num_cols + j) = *(b + j*num_cols + i);
-        *(b + j*num_cols + i) = temp;
-      }
+  uint32_t row = 0;
+  for (; row < num_rows; row++) { 
+    uint32_t col = row + 1;
+    for (; col < num_cols; col++) { 
+      uint32_t row_val = (row * num_cols);
+      int32_t temp = b[row_val + col];
+      b[row_val + col] = b[(col * num_cols) + row];
+      b[(col * num_cols) + row] = temp;
+    }
   }
 }
 
@@ -80,16 +81,7 @@ void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) {
   //     b[j*num_cols+i] = temp;
   //   }
   // }
-  // uint32_t row = 0;
-  // for (; row < num_rows; row++) { 
-  //   uint32_t col = row + 1;
-  //   for (; col < num_cols; col++) { 
-  //     uint32_t row_val = (row * num_cols);
-  //     int32_t temp = b[row_val + col];
-  //     b[row_val + col] = b[(col * num_cols) + row];
-  //     b[(col * num_cols) + row] = temp;
-  //   }
-  // }
+
 
 
 
