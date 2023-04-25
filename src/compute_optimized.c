@@ -142,7 +142,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   int row = 0;
   for (; row < num_rows_b; row++) { 
-    flip(num_cols_b, &(b_ptr[row]));
+    flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
   int col = 0;
   for (; col < num_cols_b; col++) { 
