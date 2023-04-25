@@ -9,17 +9,19 @@
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   
   // TODO: implement dot product of vec1 and vec2, both of size n
-  __m256 res = _mm256_set_ps(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
   uint32_t cut_off = n - (n % 8);
-  // int idx = 0;
-  // __m256 vector1, vector2;
-  // uint32_t i = 0;
-  // for (; i < cut_off; i += 8) { 
-  //   vector1 = _mm256_load_ps ((float const *) (vec1 + i));
-  //   vector2 = _mm256_load_ps ((float const *) (vec2 + i));
-  //   vector1 = _mm256_mul_ps(vector1, vector2);
-  //   res = _mm256_add_ps(res, vector1);
-  // }
+  int idx = 0;
+  __m256i vector1, vector2;
+  uint32_t i = 0;
+  //__m256i _mm256_mul_epi32 (__m256i a, __m256i b)
+  //__m256i _mm256_add_epi32 (__m256i a, __m256i b)
+  for (; i < cut_off; i += 8) { 
+    vector1 = _mm256_load_epi32((__m256i *) (vec1 + i));
+    vector2 = _mm256_load_epi32((__m256i *) (vec2 + i));
+    vector1 = _mm256_mul_epi32(vector1, vector2);
+    res = _mm256_add_epi32 (res, vector1);
+  }
 
   uint32_t j = cut_off;
   int final = 0;
@@ -28,10 +30,9 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   }
 
   int temp[8];
-  //_mm256_store_ps((float *) temp, res);
-  //float rest = (temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
-  //return rest + final;
-  return final;
+  //void _mm256_store_epi32 (void* mem_addr, __m256i a)
+  _mm256_store_epi32 ((__m256i *) temp, res);
+  return final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7];
 }
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
