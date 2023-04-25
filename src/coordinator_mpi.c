@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
       MPI_Send(&message, 1, MPI_INT32_T, source, 0, MPI_COMM_WORLD);
       // TODO: send `nextTask` as the message to the process we just received a message from
       nextTask += 1;
-      numTasks -= 1;
+      num_tasks -= 1;
     }
     for (int i = 0; i < totalProcs - 1; i++) {
           // TODO: receive a message from any source (so we know that this node is done with its task)
