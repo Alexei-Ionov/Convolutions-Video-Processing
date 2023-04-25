@@ -53,6 +53,10 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
   {
     int thread_num = omp_get_thread_num(); 
     int num_threads = omp_get_num_threads();
+    printf("%d", n);
+    printf("%s", "   ");
+    printf("%d", num_threads);
+    printf("%s", "\n");
     int work = (n / num_threads);
     int start = thread_num * work;
     int finish = start + work;
