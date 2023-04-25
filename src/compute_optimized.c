@@ -14,11 +14,9 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   int idx = 0;
   __m256i vector1, vector2;
   uint32_t i = 0;
-  //__m256i _mm256_mul_epi32 (__m256i a, __m256i b)
-  //__m256i _mm256_add_epi32 (__m256i a, __m256i b)
   for (; i < cut_off; i += 8) { 
-    vector1 = _mm256_load_epi32((__m256i *) (vec1 + i));
-    vector2 = _mm256_load_epi32((__m256i *) (vec2 + i));
+    vector1 = _mm256_load_epi32((void const*) (vec1 + i));
+    vector2 = _mm256_load_epi32((void const*) (vec2 + i));
     vector1 = _mm256_mul_epi32(vector1, vector2);
     res = _mm256_add_epi32 (res, vector1);
   }
