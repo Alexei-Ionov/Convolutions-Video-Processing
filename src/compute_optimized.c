@@ -48,6 +48,7 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 
 void flip_horizantal_optimized(int n, int32_t *row_ptr) { 
   // n == half size of the arrray
+  int furthest_completed = 0;
   #pragma omp parallel 
   {
     int thread_num = omp_get_thread_num(); 
@@ -55,6 +56,7 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
     int work = (n / num_threads);
     int start = thread_num * work;
     int finish = start + work;
+    
     if (finish > n) { 
       finish = n;
     }
@@ -64,8 +66,14 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
       row_ptr[n + diff] = row_ptr[start];
       row_ptr[start] = temp;
     }
+    furthest_completed = max(furthest_completed, finish);
   }
-  
+  for (; furthest_completed < n; furthest_completed++) { 
+    int diff = n - furthest_completed;
+    int temp = row_ptr[n + diff];
+    row_ptr[n + diff] = row_ptr[furthest_completed];
+    row_ptr[furthest_completed] = temp;  
+  }
 }
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
