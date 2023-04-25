@@ -54,7 +54,7 @@ void flip(uint32_t size, int32_t *row_ptr) {
 }
 void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
 
-  int i, j;
+  uint32_t i, j;
   int32_t temp;
 
   for (i = 0; i < num_rows; i++) {
