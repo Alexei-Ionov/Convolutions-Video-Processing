@@ -16,7 +16,8 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   for (; i < cut_off; i += 8) { 
     vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
     vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
-    vector1 = _mm256_mul_epi32(vector1, vector2);
+    vector1 = _mm256_mullo_epi32 (vector1, vector2);
+    //vector1 = _mm256_mul_epi32(vector1, vector2);
     res = _mm256_add_epi32(res, vector1);
   }
 
@@ -28,7 +29,6 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 
   int32_t temp[8];
   _mm256_storeu_si256((__m256i *) temp, res);
-
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 }
 
