@@ -46,31 +46,26 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 }
 
 
-void flip_horizontal_threaded(int n, int num_rows, int32_t *b_ptr) { 
+void flip_horizantal_optimized(int n, int32_t *row_ptr) { 
   // n == half size of the arrray
   #pragma omp parallel 
   {
-    #pragma omp for 
-    for (int row = 0; row < num_rows; row++) { 
-
+    int thread_num = omp_get_thread_num(); 
+    int num_threads = omp_get_num_threads();
+    int work = (n / num_threads);
+    int start = thread_num * work;
+    int finish = start + work;
+    if (finish > n) { 
+      finish = n;
     }
-
-    // int thread_num = omp_get_thread_num(); 
-    // int num_threads = omp_get_num_threads();
-    // int work = (n / num_threads);
-    // int start = thread_num * work;
-    // int finish = start + work;
-    // if (finish > n) { 
-    //   finish = n;
-    // }
-    // for (; start <= finish; start++) { 
-    //   int diff = n - start;
-    //   int temp = b_ptr[n + diff];
-    //   b_ptr[n + diff] = b_ptr[start];
-    //   b_ptr[start] = temp;
-    // }
-  
+    for (; start <= finish; start++) { 
+      int diff = n - start;
+      int temp = row_ptr[n + diff];
+      row_ptr[n + diff] = row_ptr[start];
+      row_ptr[start] = temp;
+    }
   }
+  
 }
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
@@ -106,46 +101,21 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   
   uint32_t half = num_cols_b >> 1;
-  // printf("%d", num_cols_b);
-  // printf("%s", "\n");
+  
   // boost performance by multithreading
   int end_row = num_rows_b - 1;
-  // for (int row = 0; row < num_rows_b; row++) { 
-  //   flip_horizontal_naive(row, num_cols_b, b_ptr);
-  // }
-  // for (int col = 0; col < num_cols_b; col++) { 
-  //   flip_vertial(end_row, num_cols_b, col, b_ptr);
-  // }
-
-
-
   #pragma omp parallel 
   {
     #pragma omp for
     for (int row = 0; row < num_rows_b; row++) { 
-      flip_horizontal_naive(row, num_cols_b, b_ptr);
+      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]))
     }
     #pragma omp barrier
-    
     #pragma omp for 
     for (int col = 0; col < num_cols_b; col++) { 
       flip_vertial(end_row, num_cols_b, col, b_ptr);
     }
   }
-
-  // #pragma omp parallel 
-  // {
-  //   #pragma omp for 
-  //   for (int col = 0; col < num_cols_b; col++) { 
-  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
-  //   }
-  // }
-
-  // if (num_cols_b < THRESHOLD) { 
-  //     flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
-  // } else { 
-  //     flip_horizontal_threaded(half, num_rows_b, &(b_ptr[row * num_cols_b])); 
-  // }
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
