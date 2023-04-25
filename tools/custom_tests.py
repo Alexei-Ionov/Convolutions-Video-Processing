@@ -8,9 +8,9 @@ def test_example(test: TestSpec):
 
 @Test()
 def my_custom_test(test: TestSpec):
-    rows_a = 20
-    cols_a = 20
-    rows_b = 10
-    cols_b = 15
+    rows_a = 200
+    cols_a = 200
+    rows_b = 100
+    cols_b = 100
 
     test.add_task(Task(Matrix.random(rows_a, cols_a, min_value=-2, max_value = 2), Matrix.random(rows_b, cols_b, min_value=0, max_value= 5)))
