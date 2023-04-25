@@ -48,11 +48,14 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 
 void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
   uint32_t half = size / 2;
-  #pragma omp parallel for 
-  for (uint32_t index = 0; index < half; index++) { 
+  #pragma omp parallel 
+  {
+    #pragma omp parallel for 
+    for (uint32_t index = 0; index < half; index++) { 
     int32_t temp = row_ptr[index];
     row_ptr[index] = row_ptr[size - index - 1];
     row_ptr[size - index - 1] = temp;
+    }
   }
 }
 
@@ -126,53 +129,18 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *b_ptr = b_matrix->data;
  
  
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-
-  
-  
-  // boost performance by multithreading
   int end_row = num_rows_b - 1;
-  // for (int row = 0; row < num_rows_b; row++) { 
-  //   if (num_cols_b > 0) { 
-  //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
-  //   } else { 
-  //     flip_horizontal_naive(row, num_cols_b, b_ptr);
-  //   }
-  // }
-  // for (int col = 0; col < num_cols_b; col++) { 
-  //   flip_vertial(end_row, num_cols_b, col, b_ptr);
-  // }
-  #pragma omp parallel 
-  { 
-    #pragma omp for
-    for (int row = 0; row < num_rows_b; row++) { 
-      flip_horizontal_naive(row, num_cols_b, b_ptr);
-    }
-    #pragma omp for
-    for (int col = 0; col < num_cols_b; col++) { 
-      flip_vertial(end_row, num_cols_b, col, b_ptr);
-    }
+ 
+  int row = 0;
+  for (; row < num_rows_b; row++) { 
+    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
   }
-  // for (int row = 0; row < num_rows_b; row++) { 
-  //   flip_horizontal_naive(row, num_cols_b, b_ptr);
-  // }
-  // for (int col = 0; col < num_cols_b; col++) { 
-  //    flip_vertial(end_row, num_cols_b, col, b_ptr);
-  // }
+  int col = 0;
+  for (; col < num_cols_b; col++) { 
+     flip_vertial(end_row, num_cols_b, col, b_ptr);
+  }
 
-  // #pragma omp parallel 
-  // {
-  //   #pragma omp for
-  //   for (int row = 0; row < num_rows_b; row++) { 
-  //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
-  //   }
-  //   #pragma omp barrier
-  //   #pragma omp for 
-  //   for (int col = 0; col < num_cols_b; col++) { 
-  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
-  //   }
-  // }
-  
+
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
