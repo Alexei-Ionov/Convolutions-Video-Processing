@@ -12,26 +12,27 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   __m256 res = _mm256_set_ps(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   uint32_t cut_off = n - (n % 8);
   int idx = 0;
-  __m256 vector1;
-  __m256 vector2;
+  __m256 vector1, vector2, vector3;
+  
   while (cut_off) { 
     
     vector1 = _mm256_load_ps ((float const *) vec1);
     vector2 = _mm256_load_ps ((float const *) vec2);
-    __m256 vector3 = _mm256_mul_ps(vector1, vector2);
+    vector3 = _mm256_mul_ps(vector1, vector2);
     res = _mm256_add_ps(res, vector1);
     vec1 += OFFSET;
     vec2 += OFFSET;
     cut_off -= OFFSET;
   }
-  int end = n % 8;
-  int j = 0;
-  int final = 0;
-  for (; j < end; j++) { 
-    final += (vec1[j] * vec2[j]);
-  }
+  // int end = n % 8;
+  // int j = 0;
+  // int final = 0;
+  // for (; j < end; j++) { 
+  //   final += (vec1[j] * vec2[j]);
+  // }
   int rest = (int) res[0] + (int) res[1] + (int) res[2] + (int) res[3] + (int) res[4] + (int) res[5] + (int) res[6] + (int) res[7];
-  return rest + final;
+  //return rest + final;
+  return rest;
 }
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
