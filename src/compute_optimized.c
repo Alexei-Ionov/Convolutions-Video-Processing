@@ -31,7 +31,14 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 }
 
-
+void print_matrix(int* matrix, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", *(matrix + i * cols + j));
+        }
+        printf("\n");
+    }
+}
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
   int end_ptr = (row * num_col) + num_col - 1;
   int start_ptr = (row * num_col);
@@ -135,16 +142,18 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   int row = 0;
-  for (; row < num_rows_b; row++) { 
-    flip(num_cols_b, &(b_ptr[row]));
-  }
-
+  // for (; row < num_rows_b; row++) { 
+  //   flip(num_cols_b, &(b_ptr[row]));
+  // }
+  print_matrix(b_ptr, num_rows_b, num_cols_b)
   transpose(num_rows_b, num_cols_b, b_ptr);
+  print_matrix(b_ptr, num_cols_b, num_rows_b)
 
-  int col = 0;
-  for (; col < num_cols_b; col++) { 
-    flip(num_cols_b, &(b_ptr[col]));
-  }
+
+  // int col = 0;
+  // for (; col < num_cols_b; col++) { 
+  //   flip(num_cols_b, &(b_ptr[col]));
+  // }
 
   transpose(num_cols_b, num_rows_b, b_ptr);
   
