@@ -69,18 +69,18 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
       row_ptr[n + diff] = row_ptr[start];
       row_ptr[start] = temp;
     }
-    // #pragma omp critical
-    // {
-    //   furthest_completed = MAX(furthest_completed, finish);
-    // }
+    #pragma omp critical
+    {
+      furthest_completed = MAX(furthest_completed, finish);
+    }
      
   }
-  // for (; furthest_completed < n; furthest_completed++) { 
-  //   int diff = n - furthest_completed;
-  //   int temp = row_ptr[n + diff];
-  //   row_ptr[n + diff] = row_ptr[furthest_completed];
-  //   row_ptr[furthest_completed] = temp;  
-  // }
+  for (; furthest_completed < n; furthest_completed++) { 
+    int diff = n - furthest_completed;
+    int temp = row_ptr[n + diff];
+    row_ptr[n + diff] = row_ptr[furthest_completed];
+    row_ptr[furthest_completed] = temp;  
+  }
 }
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
