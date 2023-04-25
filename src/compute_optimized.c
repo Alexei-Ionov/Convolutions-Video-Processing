@@ -107,8 +107,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         temp = b_ptr[end];
         b_ptr[end] = b_ptr[start];
         b_ptr[start] = temp;
-        end -= num_col;
-        start += num_col;
+        end -= num_cols_b;
+        start += num_cols_b;
       }
     }
   }
