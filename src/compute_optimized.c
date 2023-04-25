@@ -14,7 +14,6 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   int idx = 0;
   __m256 vector1, vector2;
   uint32_t i = 0;
-  uint32_t cut_off =  n - (n % 8);
   for (;  i < cut_off; i += 8) { 
     vector1 = _mm256_load_ps ((float const *) (vec1 + i));
     vector2 = _mm256_load_ps ((float const *) (vec2 + i));
