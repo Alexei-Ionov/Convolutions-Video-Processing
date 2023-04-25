@@ -11,26 +11,26 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
   __m256 res = _mm256_set_ps(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   uint32_t cut_off = n - (n % 8);
-  // // int idx = 0;
-  // // __m256 vector1, vector2;
-  // // uint32_t i = 0;
-  // // for (; i < cut_off; i += 8) { 
-  // //   vector1 = _mm256_load_ps ((float const *) (vec1 + i));
-  // //   vector2 = _mm256_load_ps ((float const *) (vec2 + i));
-  // //   vector1 = _mm256_mul_ps(vector1, vector2);
-  // //   res = _mm256_add_ps(res, vector1);
-  // // }
-
-  // uint32_t j = cut_off;
-  // int final = 0;
-  // for (; j < n; j++) { 
-  //   final += (vec1[j] * vec2[j]);
+  // int idx = 0;
+  // __m256 vector1, vector2;
+  // uint32_t i = 0;
+  // for (; i < cut_off; i += 8) { 
+  //   vector1 = _mm256_load_ps ((float const *) (vec1 + i));
+  //   vector2 = _mm256_load_ps ((float const *) (vec2 + i));
+  //   vector1 = _mm256_mul_ps(vector1, vector2);
+  //   res = _mm256_add_ps(res, vector1);
   // }
 
-  // int temp[8];
-  // _mm256_store_ps ((float *) temp , res);
-  // int rest = (int) (temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
-  return 0;
+  uint32_t j = cut_off;
+  int final = 0;
+  for (; j < n; j++) { 
+    final += (vec1[j] * vec2[j]);
+  }
+
+  int temp[8];
+  _mm256_store_ps ((float *) temp, res);
+  int rest = (int) (temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
+  return rest + final;
 }
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
