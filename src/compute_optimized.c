@@ -17,7 +17,6 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
     vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
     vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
     vector1 = _mm256_mullo_epi32 (vector1, vector2);
-    //vector1 = _mm256_mul_epi32(vector1, vector2);
     res = _mm256_add_epi32(res, vector1);
   }
 
@@ -101,7 +100,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int row = 0;
-  uint32_t half = num_cols_b / 2;
+  uint32_t half = num_cols_b >> 1;
 
   for (;row < num_rows_b; row++) { 
     if (num_cols_b < THRESHOLD) { 
