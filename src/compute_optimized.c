@@ -31,9 +31,9 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 }
 
-void print_matrix(int* matrix, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+void print_matrix(int32_t* matrix, uint32_t rows, uint32_t cols) {
+    for (uint32_t i = 0; i < rows; i++) {
+        for (uint32_t j = 0; j < cols; j++) {
             printf("%d ", *(matrix + i * cols + j));
         }
         printf("\n");
