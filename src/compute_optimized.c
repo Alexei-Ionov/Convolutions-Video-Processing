@@ -49,14 +49,11 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 void flip_horizantal_optimized(int n, int32_t *row_ptr) { 
   // n == half size of the arrray
   int furthest_completed = 0;
+  
   #pragma omp parallel 
   {
     int thread_num = omp_get_thread_num(); 
     int num_threads = omp_get_num_threads();
-    printf("%d", n);
-    printf("%s", "   ");
-    printf("%d", num_threads);
-    printf("%s", "\n");
     int work = (n / num_threads);
     int start = thread_num * work;
     int finish = start + work;
@@ -70,18 +67,18 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
       row_ptr[n + diff] = row_ptr[start];
       row_ptr[start] = temp;
     }
-    #pragma omp critical
-    {
-      furthest_completed = MAX(furthest_completed, finish);
-    }
+    // #pragma omp critical
+    // {
+    //   furthest_completed = MAX(furthest_completed, finish);
+    // }
      
   }
-  for (; furthest_completed < n; furthest_completed++) { 
-    int diff = n - furthest_completed;
-    int temp = row_ptr[n + diff];
-    row_ptr[n + diff] = row_ptr[furthest_completed];
-    row_ptr[furthest_completed] = temp;  
-  }
+  // for (; furthest_completed < n; furthest_completed++) { 
+  //   int diff = n - furthest_completed;
+  //   int temp = row_ptr[n + diff];
+  //   row_ptr[n + diff] = row_ptr[furthest_completed];
+  //   row_ptr[furthest_completed] = temp;  
+  // }
 }
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
@@ -122,7 +119,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
   for (int row = 0; row < num_rows_b; row++) { 
     if (num_cols_b > THRESHOLD) { 
-      flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+      flip_horizantal_optimized(half, &(b_ptr[row]));
     } else { 
       flip_horizontal_naive(row, num_cols_b, b_ptr);
     }
