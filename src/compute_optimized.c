@@ -61,8 +61,6 @@ void flip(uint32_t size, int32_t *row_ptr) {
 void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
   uint32_t i, j;
   int32_t temp;
-
-  // compute transpose of matrix in place
   for (i = 0; i < num_rows; i++) {
       for (j = i+1; j < num_cols; j++) {
         temp = *(b + i*num_cols + j);
