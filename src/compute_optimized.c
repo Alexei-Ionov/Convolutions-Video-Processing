@@ -66,7 +66,11 @@ void flip_horizantal_optimized(int n, int32_t *row_ptr) {
       row_ptr[n + diff] = row_ptr[start];
       row_ptr[start] = temp;
     }
-    furthest_completed = MAX(furthest_completed, finish);
+    #pragma omp critical
+    {
+      furthest_completed = MAX(furthest_completed, finish);
+    }
+     
   }
   for (; furthest_completed < n; furthest_completed++) { 
     int diff = n - furthest_completed;
