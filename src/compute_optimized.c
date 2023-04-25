@@ -44,6 +44,18 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
     start_ptr += 1;
   }
 }
+void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
+  uint32_t row = 0;
+  for (; row < num_rows; row++) { 
+    uint32_t col = row + 1;
+    for (; col < num_cols; col++) { 
+      uint32_t row_val = (row * num_cols);
+      int32_t temp = b[row_val + col];
+      b[row_val + col] = b[(col * num_cols) + row];
+      b[(col * num_cols) + row] = temp;
+    }
+  }
+}
 
 
 void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
@@ -93,27 +105,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   int row = 0;
   for (; row < num_rows_b; row++) { 
-    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+    flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
-  #pragma omp parallel 
-  {
-
-    #pragma omp for
-    for (int col = 0; col < num_cols_b; col++) { 
-      int start = col;
-      int end = (row * num_cols_b) + col;
-      int32_t temp;
-      while (start < end) { 
-        temp = b_ptr[end];
-        b_ptr[end] = b_ptr[start];
-        b_ptr[start] = temp;
-        end -= num_cols_b;
-        start += num_cols_b;
-      }
-    }
+  transpose(num_rows_b, num_cols_b, b_ptr);
+  int col = 0;
+  for (; col < num_cols_b; col++) { 
+    flip_horizontal_naive(col, num_cols_b, b_ptr);
   }
-
-
+  transpose(num_rows_b, num_cols_b, b_ptr);
+  
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
@@ -146,7 +146,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   res[index] = local;
   //   index += 1;
   // }
-  int col;
 
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
