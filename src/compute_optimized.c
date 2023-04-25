@@ -59,9 +59,9 @@ void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) {
 
   for (i = 0; i < num_rows; i++) {
     for (j = i+1; j < num_cols; j++) {
-      temp = matrix[i*num_cols+j];
-      matrix[i*num_cols+j] = matrix[j*num_cols+i];
-      matrix[j*num_cols+i] = temp;
+      temp = b[i*num_cols+j];
+      b[i*num_cols+j] = b[j*num_cols+i];
+      b[j*num_cols+i] = temp;
     }
   }
   // uint32_t row = 0;
