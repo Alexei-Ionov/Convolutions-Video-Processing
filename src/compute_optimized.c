@@ -45,8 +45,8 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
   }
 }
 void flip(uint32_t size, int32_t *row_ptr) { 
-  u_int32_t half = size;
-  for (int index = 0; index < half; index++) { 
+  uint32_t half = size;
+  for (uint32_t index = 0; index < half; index++) { 
     int32_t temp = row_ptr[index];
     row_ptr[index] = row_ptr[size - index - 1];
     row_ptr[size - index - 1] = temp;
