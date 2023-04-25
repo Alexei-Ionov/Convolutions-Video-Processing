@@ -123,26 +123,23 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   {
     #pragma omp for
     for (int row = 0; row < num_rows_b; row++) { 
-      int end_ptr = (row * num_cols_b) + num_cols_b - 1;
-      int start_ptr = (row * num_cols_b);
-      int32_t temp;
-      while (start_ptr < end_ptr) { 
-        temp = b_ptr[end_ptr];
-        b_ptr[end_ptr] = b_ptr[start_ptr];
-        b_ptr[start_ptr] = temp;
-        end_ptr -= 1;
-        start_ptr += 1;
-      }
+      flip_horizontal_naive(row, num_cols_b, b_ptr);
     }
-  }
-
-  #pragma omp parallel 
-  {
+    #pragma omp barrier
+    
     #pragma omp for 
     for (int col = 0; col < num_cols_b; col++) { 
       flip_vertial(end_row, num_cols_b, col, b_ptr);
     }
   }
+
+  // #pragma omp parallel 
+  // {
+  //   #pragma omp for 
+  //   for (int col = 0; col < num_cols_b; col++) { 
+  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
+  //   }
+  // }
 
   // if (num_cols_b < THRESHOLD) { 
   //     flip_horizontal_naive(row, num_cols_b, b_ptr); //overhead of starting threaded isn't worth so just do naive implementatino
