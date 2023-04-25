@@ -4,7 +4,6 @@
 #include "compute.h"
 #define THRESHOLD 40
 #define OFFSET 8
-#define MAX(a,b) (((a)>(b))?(a):(b))
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
@@ -142,21 +141,21 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   int row = 0;
-  // for (; row < num_rows_b; row++) { 
-  //   flip(num_cols_b, &(b_ptr[row]));
-  // }
+  for (; row < num_rows_b; row++) { 
+    flip(num_cols_b, &(b_ptr[row]));
+  }
   printf("%s", "before: \n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   transpose(num_rows_b, num_cols_b, b_ptr);
   printf("%s", "after: \n");
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  print_matrix(b_ptr, num_cols_b, num_rows_b);
   
 
 
   int col = 0;
-  // for (; col < num_cols_b; col++) { 
-  //   flip(num_cols_b, &(b_ptr[col]));
-  // }
+  for (; col < num_cols_b; col++) { 
+    flip(num_cols_b, &(b_ptr[col]));
+  }
 
   transpose(num_cols_b, num_rows_b, b_ptr);
   
