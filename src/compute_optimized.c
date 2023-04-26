@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 80
+#define THRESHOLD 90
 #define OFFSET 8
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
@@ -65,9 +65,9 @@ void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) {
   {
     #pragma omp parallel for 
     for (int index = 0; index < half; index++) { 
-    int32_t temp = row_ptr[index];
-    row_ptr[index] = row_ptr[size - index - 1];
-    row_ptr[size - index - 1] = temp;
+      int32_t temp = row_ptr[index];
+      row_ptr[index] = row_ptr[size - index - 1];
+      row_ptr[size - index - 1] = temp;
     }
   }
 }
@@ -106,7 +106,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
   
   for (; row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
+    //flip_horizontal_naive(row, num_cols_b, b_ptr);
+    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
   }
   
   if (num_cols_b > THRESHOLD) { 
