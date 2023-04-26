@@ -18,8 +18,8 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
     vector1 = _mm256_mullo_epi32 (vector1, vector2);
     res = _mm256_add_epi32(res, vector1);
 
-    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i + 4));
-    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i + 4));
+    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i + 8));
+    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i + 8));
     vector1 = _mm256_mullo_epi32 (vector1, vector2);
     res = _mm256_add_epi32(res, vector1);
   }
