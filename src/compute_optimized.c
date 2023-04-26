@@ -142,7 +142,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t local;
   int b_ptr_index;
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-    col = 0;
+    int col = 0;
     for (; col <= col_diff; col++) { 
       row = 0;
       local = 0;
