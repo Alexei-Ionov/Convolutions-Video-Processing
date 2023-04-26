@@ -107,7 +107,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   
   for (; row < num_rows_b; row++) { 
     //flip_horizontal_naive(row, num_cols_b, b_ptr);
-    flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
+    flip_horizantal_optimized(num_cols_b, &(b_ptr[row * num_cols_b]));
   }
   
   if (num_cols_b > THRESHOLD) { 
