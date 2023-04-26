@@ -105,19 +105,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   int row = 0;
 
-  if (num_rows_b > THRESHOLD) { 
-    #pragma omp parallel for
-    for (int row = 0; row < num_rows_b; row++) { 
+  for (; row < num_rows_b; row++) { 
     flip_horizontal_naive(row, num_cols_b, b_ptr);
-    //flip_horizantal_optimized(num_cols_b, &(b_ptr[row * num_cols_b]));
-    }
-  } else { 
-      for (; row < num_rows_b; row++) { 
-        flip_horizontal_naive(row, num_cols_b, b_ptr);
-      }
   }
-  
-  
   
   if (num_cols_b > THRESHOLD) { 
     #pragma omp parallel 
