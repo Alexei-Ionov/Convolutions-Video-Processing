@@ -200,6 +200,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       printf("%s", "  ");
     }
     printf("%s", "\n");
+    printf("%s", "\n");
+    printf("%s", "\n");
 
     
     for (; col <= col_diff; col++) {
@@ -217,6 +219,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         printf("%d", hash[i]);
         printf("%s", "  ");
       }
+      printf("%s", "\n");
+      printf("%s", "\n");
       printf("%s", "\n");
       res[index] = local;
       index += 1;
