@@ -182,20 +182,20 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     b_ptr_index = 0;
     int hash[num_rows_b];
     for (; row < num_rows_b; row++) { 
-      int dot_res = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-      hash[row] = dot_res;
-      local += dot_res;
+      hash[row] = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+      local += hash[row];
       row_a2 += 1; 
       b_ptr_index += num_cols_b;
     }
     res[index] = local;
     col += 1;       //col == 1
     index += 1;     //index == 1
-    local = 0;
-   
+    
     for (; col <= col_diff; col++) {
       row = 0;
       b_ptr_index = 0;
+      local = 0;
+      row_a2 = row_a;
 
       for (; row < num_rows_b; row++) { 
         a_ptr_index = row_a2 * num_cols_a;
