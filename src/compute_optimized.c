@@ -148,11 +148,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   res = malloc(sizeof(int32_t) * size_of_res);
 
-  uint32_t row_a = 0;
-  int index = 0;
-  int32_t local;
-  int b_ptr_index;
-
+  
   // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
   //   col = 0;
   //   for (; col <= col_diff; col++) { 
@@ -173,23 +169,47 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   res[index] = local;
   //   index += 1;
   // }
-
+  uint32_t row_a = 0;
+  int index = 0;
+  int32_t local;
+  int b_ptr_index;
+  int a_ptr_index;
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
-    for (; col <= col_diff; col++) { 
+    row = 0;
+    local = 0;
+    int row_a2 = row_a;
+    b_ptr_index = 0;
+    int hash[num_rows_b];
+    for (; row < num_rows_b; row++) { 
+      int dot_res = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+      hash[row] = dot_res;
+      local += dot_res;
+      row_a2 += 1; 
+      b_ptr_index += num_cols_b;
+    }
+    res[index] = local;
+    col += 1;       //col == 1
+    index += 1;     //index == 1
+    local = 0;
+   
+    for (; col <= col_diff; col++) {
       row = 0;
-      local = 0;
-      int row_a2 = row_a;
       b_ptr_index = 0;
-      for (; row < num_rows_b; row++) {
-        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-        row_a2 += 1;
+
+      for (; row < num_rows_b; row++) { 
+        a_ptr_index = row_a2 * num_cols_a;
+        hash[row] = hash[row] - (b_ptr[b_ptr_index] * a_ptr[a_ptr_index + col - 1]) + ((b_ptr[b_ptr_index + num_cols_b - 1]) * a_ptr[a_ptr_index + col + num_cols_b - 1]);
+        local += hash[row];
         b_ptr_index += num_cols_b;
+        row_a2 += 1;
       }
       res[index] = local;
       index += 1;
     }
   }
+
+
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
