@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 40
+#define THRESHOLD 100
 #define OFFSET 8
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
@@ -109,27 +109,30 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
   
-  #pragma omp parallel 
-  {
-    #pragma omp for
-    for (int col = 0; col < num_cols_b; col++) { 
-      int end = ((num_rows_b - 1) * num_cols_b) + col;
-      int start = col;
-      while (start < end) { 
-        int32_t temp = b_ptr[end];
-        b_ptr[end] = b_ptr[start];
-        b_ptr[start] = temp;
-        start += num_cols_b;
-        end -= num_cols_b;
+  if (num_cols_b > THRESHOLD) { 
+    #pragma omp parallel 
+    {
+      #pragma omp for
+      for (int col = 0; col < num_cols_b; col++) { 
+        int end = ((num_rows_b - 1) * num_cols_b) + col;
+        int start = col;
+        while (start < end) { 
+          int32_t temp = b_ptr[end];
+          b_ptr[end] = b_ptr[start];
+          b_ptr[start] = temp;
+          start += num_cols_b;
+          end -= num_cols_b;
+        }
       }
     }
-  
-  }
-  // int col = 0;
-  // for (; col < num_cols_b; col++) { 
-  //   flip_vertial(end_row, num_cols_b, col, b_ptr);
-  // }
+  } else { 
+    int col = 0;
+    for (; col < num_cols_b; col++) { 
+      flip_vertial(end_row, num_cols_b, col, b_ptr);
+    }
 
+  }
+  
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
