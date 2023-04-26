@@ -8,13 +8,18 @@
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
   __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
-  uint32_t cut_off = n - (n % 8);
+  uint32_t cut_off = n - (n % 16);
   int idx = 0;
   __m256i vector1, vector2;
   uint32_t i = 0;
-  for (; i < cut_off; i += 8) { 
+  for (; i < cut_off; i += 16) { 
     vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
     vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
+    vector1 = _mm256_mullo_epi32 (vector1, vector2);
+    res = _mm256_add_epi32(res, vector1);
+
+    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i + 4));
+    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i + 4));
     vector1 = _mm256_mullo_epi32 (vector1, vector2);
     res = _mm256_add_epi32(res, vector1);
   }
