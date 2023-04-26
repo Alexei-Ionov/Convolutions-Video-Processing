@@ -136,7 +136,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   int col = 0;
   for (; col < num_cols_b; col++) { 
-    flip_horizontal_naive(col, num_rows_b, b_ptr);
+    //flip_horizontal_naive(col, num_rows_b, b_ptr);
     //flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   printf("%s", "after horizantal flip: \n");
