@@ -111,7 +111,18 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
 
   for (; row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
+    int start = row;
+    int end = num_cols_b - 1;
+    while ((end - start) >= 4) { 
+      int32_t temp1 = b_ptr[end];
+      int32_t temp2 = b_ptr[end - 1];
+      b_ptr[end] = b_ptr[start];
+      b_ptr[end - 1] = b_ptr[start + 1];
+      b_ptr[start] = temp1;
+      b_ptr[start + 1] = temp2;
+      end -= 2;
+      start += 2;
+    }
   }
   
   if (num_cols_b > THRESHOLD) { 
