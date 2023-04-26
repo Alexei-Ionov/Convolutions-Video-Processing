@@ -172,6 +172,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   printf("%s", "\n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   printf("%s", "\n");
+  uint32_t row_a = 0;
+  int index = 0;
+  int32_t local;
+  int b_ptr_index;
 
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
