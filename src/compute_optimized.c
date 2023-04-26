@@ -124,21 +124,21 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   for (; row < num_rows_b; row++) { 
     flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
-  // printf("%s", "before: \n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
+  printf("%s", "before: \n");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   
-  //transpose(num_rows_b, num_cols_b, b_ptr);
+  transpose(num_rows_b, num_cols_b, b_ptr);
 
-  // printf("%s", "after: \n");
-  // print_matrix(b_ptr, num_cols_b, num_rows_b);
+  printf("%s", "after: \n");
+  print_matrix(b_ptr, num_cols_b, num_rows_b);
 
   int col = 0;
   for (; col < num_cols_b; col++) { 
-    //flip_horizontal_naive(col, num_rows_b, b_ptr);
-    flip_vertial(end_row, num_cols_b, col, b_ptr);
+    flip_horizontal_naive(col, num_cols_b, b_ptr);
+    //flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
-  //transpose(num_cols_b, num_rows_b, b_ptr);
+  transpose(num_cols_b, num_rows_b, b_ptr);
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
@@ -168,66 +168,26 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   res[index] = local;
   //   index += 1;
   // }
-  print_matrix(a_ptr, num_rows_a, num_cols_a);
-  printf("%s", "\n");
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-  printf("%s", "\n");
-
   uint32_t row_a = 0;
   int index = 0;
   int32_t local;
   int b_ptr_index;
-  int a_ptr_index;
-  int hash[num_rows_b];
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
-    row = 0;
-    local = 0;
-    a_ptr_index = row_a * num_cols_a;
-    b_ptr_index = 0;
-    for (; row < num_rows_b; row++) { 
-      hash[row] = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-      local += hash[row];
-      b_ptr_index += num_cols_b;
-      a_ptr_index += num_cols_a;
-    }
-    res[index] = local;
-    col += 1;       //col == 1
-    index += 1;     //index == 1
-    
-    for (int i =0; i < num_rows_b; i++) { 
-      printf("%d", hash[i]);
-      printf("%s", "  ");
-    }
-    printf("%s", "\n");
-    printf("%s", "\n");
-    printf("%s", "\n");
-
-    
-    for (; col <= col_diff; col++) {
+    for (; col <= col_diff; col++) { 
       row = 0;
-      b_ptr_index = 0;
       local = 0;
-      a_ptr_index = row_a * num_cols_a;
-      for (; row < num_rows_b; row++) { 
-        hash[row] = hash[row] - (b_ptr[b_ptr_index] * a_ptr[a_ptr_index + col - 1]) + ((b_ptr[b_ptr_index + num_cols_b - 1]) * a_ptr[a_ptr_index + col + num_cols_b - 1]);
-        local += hash[row];
+      int row_a2 = row_a;
+      b_ptr_index = 0;
+      for (; row < num_rows_b; row++) {
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+        row_a2 += 1;
         b_ptr_index += num_cols_b;
-        a_ptr_index += num_cols_a;
       }
-      for (int i =0; i < num_rows_b; i++) { 
-        printf("%d", hash[i]);
-        printf("%s", "  ");
-      }
-      printf("%s", "\n");
-      printf("%s", "\n");
-      printf("%s", "\n");
       res[index] = local;
       index += 1;
     }
   }
-
-  print_matrix(res, row_diff + 1, col_diff + 1);
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
