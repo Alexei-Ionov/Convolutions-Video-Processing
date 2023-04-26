@@ -169,6 +169,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   //   res[index] = local;
   //   index += 1;
   // }
+  print_matrix(a_ptr, num_rows_a, num_cols_a);
+  printf("%s", "\n");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+
   uint32_t row_a = 0;
   int index = 0;
   int32_t local;
@@ -201,14 +205,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         local += hash[row];
         b_ptr_index += num_cols_b;
         a_ptr_index += num_cols_a;
-        
       }
       res[index] = local;
       index += 1;
     }
   }
 
-
+  print_matrix(res, row_diff + 1, col_diff + 1);
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
