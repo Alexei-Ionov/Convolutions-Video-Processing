@@ -58,22 +58,6 @@ void flip(uint32_t size, int32_t *row_ptr) {
     row_ptr[size - index - 1] = temp;
   }
 }
-void transpose(uint32_t num_rows, uint32_t num_cols, int32_t *b) { 
-  uint32_t i, j;
-  int32_t temp;
-
-  for (i = 0; i < num_rows; i++) {
-    for (j = i+1; j < num_cols; j++) {
-      temp = b[i*num_cols+j];
-      b[i*num_cols+j] = b[j*num_cols+i];
-      b[j*num_cols+i] = temp;
-    }
-  }
-}
-
- 
-
-
 
 void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
   int half = size / 2;
@@ -124,35 +108,27 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   for (; row < num_rows_b; row++) { 
     flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
-  printf("%s", "before: \n");
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-
   
-  transpose(num_rows_b, num_cols_b, b_ptr);
-  printf("%s", "after first transpose: \n");
-
-  print_matrix(b_ptr, num_cols_b, num_rows_b);
-
-
-  int col = 0;
-  for (; col < num_cols_b; col++) { 
-    //flip_horizontal_naive(col, num_rows_b, b_ptr);
-    //flip_vertial(end_row, num_cols_b, col, b_ptr);
+  #pragma omp parallel 
+  {
+    #pragma omp for
+    for (int col = 0; col < num_cols_b; col++) { 
+      int end = ((num_rows_b - 1) * num_cols_b) + col;
+      int start = col;
+      while (start < end) { 
+        int32_t temp = b_ptr[end];
+        b_ptr[end] = b_ptr[start];
+        b_ptr[start] = temp;
+        start += num_cols_b;
+        end -= num_cols_b;
+      }
+    }
+  
   }
-  printf("%s", "after horizantal flip: \n");
-  print_matrix(b_ptr, num_cols_b, num_rows_b);
-
-  transpose(num_cols_b, num_rows_b, b_ptr);
-  printf("%s", "after second transpose: \n");
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-  
-
-
-
-
-
-
-
+  // int col = 0;
+  // for (; col < num_cols_b; col++) { 
+  //   flip_vertial(end_row, num_cols_b, col, b_ptr);
+  // }
 
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
@@ -161,27 +137,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   res = malloc(sizeof(int32_t) * size_of_res);
 
-  
-  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-  //   col = 0;
-  //   for (; col <= col_diff; col++) { 
-      
-  //     local = 0;
-  //     int row_a2 = row_a;
-  //     b_ptr_index = 0;
-  //     #pragma omp parallel 
-  //     { 
-  //       #pragma omp for reduction(+:local,row_a2,b_ptr_index)  
-  //         local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-  //         row_a2 += 1;
-  //         b_ptr_index += num_cols_b;
-  
-  //     }
-      
-  //   }
-  //   res[index] = local;
-  //   index += 1;
-  // }
   uint32_t row_a = 0;
   int index = 0;
   int32_t local;
