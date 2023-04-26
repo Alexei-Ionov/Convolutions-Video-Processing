@@ -174,18 +174,18 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t local;
   int b_ptr_index;
   int a_ptr_index;
+  int hash[num_rows_b];
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
     row = 0;
     local = 0;
-    int row_a2 = row_a;
+    a_ptr_index = row_a * num_cols_a;
     b_ptr_index = 0;
-    int hash[num_rows_b];
     for (; row < num_rows_b; row++) { 
-      hash[row] = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+      hash[row] = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
       local += hash[row];
-      row_a2 += 1; 
       b_ptr_index += num_cols_b;
+      a_ptr_index += num_cols_a;
     }
     res[index] = local;
     col += 1;       //col == 1
@@ -195,14 +195,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       row = 0;
       b_ptr_index = 0;
       local = 0;
-      row_a2 = row_a;
-
+      a_ptr_index = row_a * num_cols_a;
       for (; row < num_rows_b; row++) { 
-        a_ptr_index = row_a2 * num_cols_a;
         hash[row] = hash[row] - (b_ptr[b_ptr_index] * a_ptr[a_ptr_index + col - 1]) + ((b_ptr[b_ptr_index + num_cols_b - 1]) * a_ptr[a_ptr_index + col + num_cols_b - 1]);
         local += hash[row];
         b_ptr_index += num_cols_b;
-        row_a2 += 1;
+        a_ptr_index += num_cols_a;
+        
       }
       res[index] = local;
       index += 1;
