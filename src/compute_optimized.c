@@ -102,7 +102,6 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
   }
 }
 
-
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
@@ -196,6 +195,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     col += 1;       //col == 1
     index += 1;     //index == 1
     
+    for (int i =0; i < num_rows_b; i++) { 
+      printf("%d", hash[i]);
+      printf("%s", "\n");
+
+    }
+
+    
     for (; col <= col_diff; col++) {
       row = 0;
       b_ptr_index = 0;
@@ -206,6 +212,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         local += hash[row];
         b_ptr_index += num_cols_b;
         a_ptr_index += num_cols_a;
+      }
+      for (int i =0; i < num_rows_b; i++) { 
+        printf("%d", hash[i]);
+        printf("%s", "\n");
       }
       res[index] = local;
       index += 1;
