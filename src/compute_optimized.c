@@ -111,8 +111,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
 
   for (; row < num_rows_b; row++) { 
-    int start = row;
-    int end = num_cols_b - 1;
+    int start = row * num_cols_b;
+    int end = row * num_cols_b + num_cols_b - 1;
     while ((end - start) >= 4) { 
       int32_t temp1 = b_ptr[end];
       int32_t temp2 = b_ptr[end - 1];
