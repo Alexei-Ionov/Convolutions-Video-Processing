@@ -237,7 +237,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         { 
           #pragma omp for reduction(+:local, row_a2, b_ptr_index)
           for (int row = 0; row < num_rows_b; row++) { 
-            local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+            int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+            local += val;
             row_a2 += 1;
             b_ptr_index += num_cols_b;
           }
