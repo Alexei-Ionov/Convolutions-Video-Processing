@@ -2,7 +2,7 @@
 set -eu
 
 help() {
-  echo "Expected arg: path to input.txt"
+  echo "Usage: bash check_output.sh <output_dir> [reference_dir]"
 }
 
 if [ -z "${1:-}" ]; then
@@ -10,23 +10,39 @@ if [ -z "${1:-}" ]; then
   exit 1
 fi
 
+if [ -z "${2:-}" ]; then
+  out_dir="${1}"
+  ref_dir="${1}"
+else
+  out_dir="${1}"
+  ref_dir="${2}"
+fi
+
+diff_ret=0
+diff -q ${ref_dir}/input.txt ${out_dir}/input.txt > /dev/null || diff_ret=$?
+
+if [ $diff_ret -ne 0 ]; then
+    echo "${ref_dir} and ${out_dir} contain different input.txts"
+    exit -1
+fi
+
 passed=0
 total=0
-task_dirname="$(dirname ${1})"
-while IFS= read -r task_dir; do
+
+while IFS= read -r task_name; do
   diff_ret=0
-  diff -q --binary ${task_dirname}/${task_dir}/out.bin ${task_dirname}/${task_dir}/ref.bin > /dev/null || diff_ret=$?
+  diff -q ${ref_dir}/${task_name}/ref.bin ${out_dir}/${task_name}/out.bin > /dev/null || diff_ret=$?
 
   if [ $diff_ret -ne 0 ]; then
-    echo "${task_dir}: output does not match reference"
+    echo "${task_name}: output does not match reference"
   else
     passed=$(($passed + 1))
   fi
   total=$(($total + 1))
-done < <(tail -n +2 ${1})
+done < <(tail -n +2 ${ref_dir}/input.txt)
 
-echo "${task_dirname}: ${passed}/${total} tests passed"
+echo "${passed}/${total} tests passed"
 
 if [ "$passed" -ne "$total" ]; then
-  exit 1
+  exit 61
 fi

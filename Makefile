@@ -15,8 +15,13 @@ default: convolve_$(COORDINATOR)_$(COMPUTE)
 
 # Utils
 .PHONY: check-hashes ensure_compute ensure_coordinator ensure_input
-check-hashes:
+check-hashes: tools/no_md5
 	@bash tools/run_python.sh tools/check_hashes.py
+
+tools/no_md5:
+	rm -f tests/*/*/out.bin.md5
+	rm -f tests/*/*/ref.bin.md5
+	touch tools/no_md5
 
 ensure_compute:
 ifeq ($(COMPUTE),)
@@ -62,11 +67,14 @@ convolve_$(COORDINATOR)_$(COMPUTE): src/compute_$(COMPUTE).o src/coordinator_$(C
 run: | ensure_compute ensure_coordinator ensure_test
 run: convolve_$(COORDINATOR)_$(COMPUTE)
 	@bash tools/run_python.sh tools/create_tests.py $(shell basename $(TEST))
+	rm -f $(TEST)/*/out.bin
+	rm -f $(TEST)/*/out.bin.md5
 ifeq ($(COORDINATOR),mpi)
 	@bash tools/run_test.sh mpirun ./convolve_$(COORDINATOR)_$(COMPUTE) $(TEST)/input.txt
 else
 	@bash tools/run_test.sh ./convolve_$(COORDINATOR)_$(COMPUTE) $(TEST)/input.txt
 endif
+	@bash tools/check_output.sh $(TEST)
 
 # Clean
 clean:

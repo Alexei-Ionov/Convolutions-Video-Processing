@@ -1,7 +1,6 @@
 from pathlib import Path
-from typing import List, Dict
+from typing import Callable, List, Dict
 import hashlib
-import json
 import numpy as np
 import os
 import random
@@ -13,6 +12,11 @@ tests_dir = project_dir / "tests"
 oracle_path = Path("/home/ff/cs61c/sp23/proj4/convolve_oracle")
 
 all_tests: Dict[str, "TestSpec"] = {}
+
+
+def set_tests_dir(path: Path):
+    global tests_dir
+    tests_dir = path
 
 
 def run_oracle(a_path: Path, b_path: Path, out_path: Path):
@@ -28,19 +32,26 @@ def randint(lower, upper, **kwargs):
 def md5sum(path: Path) -> str:
     with path.open("rb") as f:
         contents = f.read()
-    contents = contents.replace(b"\r\n", b"\n")
     return hashlib.md5(contents).hexdigest()
+
+
+def md5sum_file(path: Path):
+    md5 = md5sum(path)
+    with (path.parent / f"{path.name}.md5").open("w") as f:
+        f.write(f"{md5}\n")
 
 
 class Matrix:
     def random(rows: int, cols: int, min_value=-1000, max_value=1000) -> "Matrix":
-        values = list(randint(min_value, max_value, size=rows * cols) & 0xFFFFFFFF)
-        return Matrix(rows, cols, values)
+        data_fn = lambda: list(
+            randint(min_value, max_value, size=rows * cols) & 0xFFFFFFFF
+        )
+        return Matrix(rows, cols, data_fn)
 
-    def __init__(self, rows: int, cols: int, data: List[int]):
+    def __init__(self, rows: int, cols: int, data_fn: Callable[[], List[int]]):
         self.rows = rows
         self.cols = cols
-        self.data = data
+        self.data_fn = data_fn
 
     def generate(self, path: Path):
         with path.open("wb") as f:
@@ -49,7 +60,7 @@ class Matrix:
             f.write(struct.pack("i", self.cols))
 
             # Write matrix elements as bytes
-            f.write(struct.pack("I" * self.rows * self.cols, *self.data))
+            f.write(struct.pack("I" * self.rows * self.cols, *self.data_fn()))
 
 
 class Task:
@@ -65,16 +76,21 @@ class Task:
         b_md5 = md5sum(path / "b.bin")
 
         try:
-            with (path / ".hashes.json").open("r") as f:
-                hashes_json = json.load(f)
-                if hashes_json["a.bin"] == a_md5 and hashes_json["b.bin"] == b_md5:
-                    return
+            a_md5_old, b_md5_old = None, None
+            with (path / "a.bin.md5").open("r") as f:
+                a_md5_old = f.read().strip()
+            with (path / "b.bin.md5").open("r") as f:
+                b_md5_old = f.read().strip()
+            if a_md5 == a_md5_old and b_md5 == b_md5_old:
+                return
         except:
             pass
 
-        with (path / ".hashes.json").open("w") as f:
-            f.write(json.dumps({"a.bin": a_md5, "b.bin": b_md5}))
         run_oracle(path / "a.bin", path / "b.bin", path / "ref.bin")
+
+        md5sum_file(path / "a.bin")
+        md5sum_file(path / "b.bin")
+        # md5sum_file(path / "ref.bin")
 
 
 class TestSpec:
