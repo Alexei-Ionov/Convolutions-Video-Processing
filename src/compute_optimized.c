@@ -37,18 +37,6 @@ void flip(uint32_t size, int32_t *row_ptr) {
   }
 }
 
-void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
-  int half = size / 2;
-  #pragma omp parallel 
-  {
-    #pragma omp parallel for 
-    for (int index = 0; index < half; index++) { 
-      int32_t temp = row_ptr[index];
-      row_ptr[index] = row_ptr[size - index - 1];
-      row_ptr[size - index - 1] = temp;
-    }
-  }
-}
 
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
@@ -107,7 +95,6 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
     end -= 8;
     start += 8;
-
   }
   int32_t temp;
   while (start < end) { 
