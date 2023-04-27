@@ -255,7 +255,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
-        printf("%d", start);
+        
         if (finish > (row_diff + 1)) {
           finish = row_diff + 1;
         }
@@ -279,7 +279,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             //printf("%d", ((start + 1) * (col + 1)) - 1);              
             // printf("%s", "\n");
 
-            res[((start + 1) * (col + 1)) - 1] = local;
+            res[((start * (row_diff + 1)) * (col_diff + 1)) + col] = local;
           }   
         }
       }
