@@ -252,8 +252,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       {
         int thread_num = omp_get_thread_num();
         int num_threads = omp_get_num_threads();
+        #pragma omp critical 
+        
         printf("%s", "thread ID:");
         printf("%d", thread_num);
+        
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
