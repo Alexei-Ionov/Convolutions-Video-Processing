@@ -272,11 +272,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
               a_ptr_index += num_cols_a;
               
             }
-            #pragma omp critical 
-            printf("%d", thread_num);
-            printf("%s", "    ");
+            //#pragma omp critical 
+            // printf("%d", thread_num);
+            // printf("%s", "    ");
             printf("%d", ((start + 1) * (col + 1)) - 1);              
-            printf("%s", "\n");
+            // printf("%s", "\n");
 
             res[((start + 1) * (col + 1)) - 1] = local;
           }   
