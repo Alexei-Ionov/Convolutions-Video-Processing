@@ -3,8 +3,8 @@
 #include <immintrin.h>
 #include "compute.h"
 #define THRESHOLD 64
-#define OFFSET 8
 #define REQ_DIFF 8
+#define NUM_THREADS 8
 // Computes the dot product of vec1 and vec2, both of size n
 
 
@@ -229,17 +229,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  // int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
-  // for (int h = 0; h < size_of_res; h++) {
-  //   temp[h] = res[h];
-  // }
-  // naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
+  
   if (row_diff >= 7) { 
     #pragma omp parallel 
     {
       int thread_num = omp_get_thread_num();
-      int num_threads = omp_get_num_threads();
-      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+     
+      uint32_t work = (row_diff + 1) / NUM_THREADS;           //might not divide perfectly so need to do manual work afterword
       uint32_t start = work * thread_num;
       uint32_t finish = start + work;
       
@@ -263,28 +259,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }   
       }
     }
-    uint32_t leftover = ((row_diff + 1) / 8) * 8;
-    for (; leftover < row_diff + 1; leftover++) {
-      uint32_t col = 0;
-      for (; col <= col_diff; col++) { 
-        uint32_t b_ptr_index = 0; 
-        int32_t local = 0;
-        uint32_t row = 0; 
-        uint32_t a_ptr_index = leftover * num_cols_a;
-        for (; row < num_rows_b; row++) {
-          local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-          b_ptr_index += num_cols_b;
-          a_ptr_index += num_cols_a;
-        }
-        res[(leftover * (col_diff + 1)) + col] = local;
-      }   
-    }
-  } else { 
-    #pragma omp parallel num_threads(row_diff + 1)
+  }
+  uint32_t leftover = (row_diff + 1) % NUM_THREADS;
+  if (leftover) {       //as long as there is even one row left to go... 
+    #pragma omp parallel num_threads(leftover)
     {
       int thread_num = omp_get_thread_num();
-      int num_threads = omp_get_num_threads();
-      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      uint32_t work = (row_diff + 1) / NUM_THREADS;           //might not divide perfectly so need to do manual work afterword
       uint32_t start = work * thread_num;
       uint32_t finish = start + work;
       
@@ -308,18 +289,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
     }
   }
-
-  // if (check_solution(res, temp, size_of_res)) { 
-  //   // printf("%s", "faulty res:");
-  //   // printf("%s", "\n");
-  //   // print_matrix(res, row_diff + 1, col_diff + 1);
-  //   // printf("%s", "real res:");
-  //   // printf("%s", "\n");
-  //   //print_matrix(temp, row_diff + 1, col_diff + 1);
-  //   printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
-
-  //   printf("%s", "\n");
-  // }
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
@@ -350,3 +319,21 @@ int execute_task(task_t *task) {
   free(output_matrix);
   return 0;
 }
+
+// int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
+  // for (int h = 0; h < size_of_res; h++) {
+  //   temp[h] = res[h];
+  // }
+  // naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
+
+    // if (check_solution(res, temp, size_of_res)) { 
+  //   // printf("%s", "faulty res:");
+  //   // printf("%s", "\n");
+  //   // print_matrix(res, row_diff + 1, col_diff + 1);
+  //   // printf("%s", "real res:");
+  //   // printf("%s", "\n");
+  //   //print_matrix(temp, row_diff + 1, col_diff + 1);
+  //   printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
+
+  //   printf("%s", "\n");
+  // }
