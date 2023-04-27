@@ -151,7 +151,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // }
 
   for (; row < num_rows_b; row++) { 
-    if (num_cols_b >= 16) { 
+    if (num_cols_b >= 32) { 
       int start = row * num_cols_b;
       int end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
       __m256i start_vec, end_vec, order_vector;
