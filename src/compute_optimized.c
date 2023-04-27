@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 90
+#define THRESHOLD 64
 #define OFFSET 8
 #define REQ_DIFF 8
 // Computes the dot product of vec1 and vec2, both of size n
@@ -151,7 +151,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // }
 
   for (; row < num_rows_b; row++) { 
-    if (num_cols_b >= 64) { 
+    if (num_cols_b >= THRESHOLD) { 
       int start = row * num_cols_b;
       int end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
       __m256i start_vec, end_vec, order_vector;
@@ -231,6 +231,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       local = 0;
       int row_a2 = row_a;
       b_ptr_index = 0;
+      #pragma omp parallel for reduction(+:local, row_a2, b_ptr_index)
       for (; row < num_rows_b; row++) {
         local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
         row_a2 += 1;
