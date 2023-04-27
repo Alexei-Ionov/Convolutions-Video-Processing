@@ -229,6 +229,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
+  uint32_t num_threads = 8;
+
   uint32_t cut_off = 0;
   if (row_diff >= 7) { 
     cut_off = (row_diff + 1) - ((row_diff + 1) % num_threads) + 1;
@@ -266,7 +268,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
     }
   } 
-  uint32_t num_threads = 8;
   uint32_t leftover = (row_diff + 1) % num_threads;
   if (leftover != 0) {       //as long as there is even one row left to go... 
     #pragma omp parallel num_threads(leftover)
