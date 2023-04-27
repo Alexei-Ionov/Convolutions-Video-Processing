@@ -133,15 +133,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   int row = 0;
-  // printf("%s", "before: \n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-  // uint32_t size = (num_cols_b * num_rows_b);
-  // int32_t *temp = malloc(sizeof(int32_t) * size);
  
-  // for (int m = 0; m < size; m++) { 
-  //   temp[m] = b_ptr[m];
-  // }
-
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
       int start = row * num_cols_b;
@@ -175,12 +167,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     }
     
   }
-  // printf("%s", "after: \n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-
-  // test_flip(temp, b_ptr, size);
   
-
   if (num_cols_b > THRESHOLD) { 
     #pragma omp parallel 
     {
@@ -211,81 +198,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-
-  // uint32_t row_a = 0;
-  // int index = 0;
-
-  // int b_ptr_index;
-  // uint32_t row_a2; 
-  
-  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-  //   int col = 0;
-  //   for (; col <= col_diff; col++) { 
-  //     b_ptr_index = 0; 
-  //     row_a2 = row_a;
-  //     int32_t local = 0;
-  //     int row = 0; 
-  //     for (; row < num_rows_b; row++) {
-  //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-  //       row_a2 += 1;
-  //       b_ptr_index += num_cols_b;
-  //     }
-  //     res[index] = local;
-  //     index += 1;
-  //   }
-  // }
-
-
-      // if (num_rows_b > 8) { 
-      //   #pragma omp parallel 
-      //   { 
-          
-      //     int thread_num = omp_get_thread_num();
-      //     int num_threads = omp_get_num_threads();
-      //     int work = num_rows_b / num_threads;
-      //     int start = thread_num * work;
-      //     int finish = start + work; 
-      //     if (finish > num_rows_b) { 
-      //       finish = num_rows_b;
-      //     }
-      //     for (; start < finish; start++) { 
-      //       local += dot(num_cols_b, &(a_ptr[((row_a + start) * num_cols_a) + col]), &(b_ptr[start]));
-      //     }
-      //   }
-      //   int left_over = 8 * (num_rows_b / 8);
-      //   for (; left_over < num_rows_b; left_over++) {
-      //     local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-      //     row_a2 += 1;
-      //     b_ptr_index += num_cols_b;
-      //   }
-      // } else { 
-      //   int row = 0;
-      //   for (; row < num_rows_b; row++) {
-      //     local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-      //     row_a2 += 1;
-      //     b_ptr_index += num_cols_b;
-      //   }
-    //   // }
-    // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-    //   int col = 0;
-    //   for (; col <= col_diff; col++) { 
-    //     b_ptr_index = 0; 
-    //     row_a2 = row_a;
-    //     int32_t local = 0;
-    //     int row = 0; 
-    //     for (; row < num_rows_b; row++) {
-    //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-    //       row_a2 += 1;
-    //       b_ptr_index += num_cols_b;
-    //     }
-    //     res[index] = local;
-    //     index += 1;
-    //   }
-    // }
-
-
-
-
     // print_matrix(a_ptr, num_rows_a, num_cols_a);
     // printf("%s", "\n");
     // print_matrix(b_ptr, num_rows_b, num_cols_b);
