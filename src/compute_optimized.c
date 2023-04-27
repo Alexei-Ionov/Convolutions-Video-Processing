@@ -101,6 +101,7 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     start += 8;
   }
   printf("%d", start);
+  printf("%s", "    ");
   printf("%d", end);
   printf("%s", "\n");
   int32_t temp;
