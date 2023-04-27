@@ -290,6 +290,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     //     index += 1;
     //   }
     // }
+    print_matrix(a_ptr, num_rows_a, num_cols_a);
+    printf("%s", "\n")
+    print_matrix(b_ptr, num_rows_b, num_cols_b);
+    printf("%s", "\n")
+    
 
         
     ///NOTE: im assuming that the size of res is AT LEAST 8.
