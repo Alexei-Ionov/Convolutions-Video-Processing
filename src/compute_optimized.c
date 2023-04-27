@@ -279,7 +279,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             //printf("%d", ((start + 1) * (col + 1)) - 1);              
             // printf("%s", "\n");
 
-            res[((start * (row_diff + 1)) * (col_diff + 1)) + col] = local;
+            res[(start * (col_diff + 1)) + col] = local;
           }   
         }
       }
