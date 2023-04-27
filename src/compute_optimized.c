@@ -79,6 +79,17 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 }
 
+void test_flip(int32_t *a, int32_t *b, uint32_t size) { 
+  uint32_t index = 0;
+  for (; index < size; index++) { 
+    if (a[index] != b[size - index - 1]) { 
+      printf("%s", "Doesn't match at index:", "%d", index);
+      printf("%s", "\n");
+    }
+  }
+
+}
+
 void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) { 
   int start = row * num_cols;
   int end = (row * num_cols) + num_cols - 8; //-8 for size of SIMD loads
@@ -139,13 +150,23 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
   printf("%s", "before: \n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
+  uint32_t size = (num_cols_b * num_rows_b);
+  int32_t *temp = malloc(sizeof(int32_t) * size);
+ 
+  for (int m = 0; m < size; m++) { 
+    temp[m] = b_ptr[m];
+  }
+
   for (; row < num_rows_b; row++) { 
     //flip_horizontal_naive(row, num_cols_b, b_ptr);
     flip_horizantal_SIMD(row, num_cols_b, b_ptr);
   }
   printf("%s", "after: \n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
+
+  test_flip(temp, b_ptr, size);
   
+
   if (num_cols_b > THRESHOLD) { 
     #pragma omp parallel 
     {
