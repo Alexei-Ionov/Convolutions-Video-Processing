@@ -279,11 +279,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         printf("%s", "   ");
         printf("%d", num_threads);
         printf("%s", "\n");
-      // uint32_t finish = start + 1;
+      uint32_t finish = start + 1;
       
-      // if (finish > (row_diff + 1)) {
-      //   finish = row_diff + 1;
-      // }
+      if (finish > (row_diff + 1)) {
+        finish = row_diff + 1;
+      }
      
       uint32_t col = 0;
       for (; col <= col_diff; col++) { 
