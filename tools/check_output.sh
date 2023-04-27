@@ -30,10 +30,8 @@ passed=0
 total=0
 
 while IFS= read -r task_name; do
-  md5sum ${out_dir}/${task_name}/out.bin | cut -d ' ' -f 1 > ${out_dir}/${task_name}/out.bin.md5
-
   diff_ret=0
-  diff -q ${ref_dir}/${task_name}/ref.bin.md5 ${out_dir}/${task_name}/out.bin.md5 > /dev/null || diff_ret=$?
+  diff -q ${ref_dir}/${task_name}/ref.bin ${out_dir}/${task_name}/out.bin > /dev/null || diff_ret=$?
 
   if [ $diff_ret -ne 0 ]; then
     echo "${task_name}: output does not match reference"

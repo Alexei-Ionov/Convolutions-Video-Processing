@@ -90,7 +90,7 @@ class Task:
 
         md5sum_file(path / "a.bin")
         md5sum_file(path / "b.bin")
-        md5sum_file(path / "ref.bin")
+        # md5sum_file(path / "ref.bin")
 
 
 class TestSpec:

@@ -15,8 +15,13 @@ default: convolve_$(COORDINATOR)_$(COMPUTE)
 
 # Utils
 .PHONY: check-hashes ensure_compute ensure_coordinator ensure_input
-check-hashes:
+check-hashes: tools/no_md5
 	@bash tools/run_python.sh tools/check_hashes.py
+
+tools/no_md5:
+	rm -f tests/*/*/out.bin.md5
+	rm -f tests/*/*/ref.bin.md5
+	touch tools/no_md5
 
 ensure_compute:
 ifeq ($(COMPUTE),)

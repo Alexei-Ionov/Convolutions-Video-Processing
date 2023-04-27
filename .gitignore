@@ -605,3 +605,4 @@ unit-test-*.snk
 convolve_*
 !src/io.o
 tests/
+tools/no_md5
