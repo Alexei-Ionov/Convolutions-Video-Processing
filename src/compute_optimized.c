@@ -253,7 +253,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
           b_ptr_index += num_cols_b;
           a_ptr_index += num_cols_a;
         }
-        res[(start * (col_diff + 1)) + col] = local;
+        res[(leftover * (col_diff + 1)) + col] = local;
         }   
       }
     } else { 
