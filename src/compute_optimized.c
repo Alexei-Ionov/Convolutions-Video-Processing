@@ -128,8 +128,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       temp = b_ptr[end];
       b_ptr[end] = b_ptr[start];
       b_ptr[start] = temp;
-      end_ptr -= 1;
-      start_ptr += 1;
+      end -= 1;
+      start += 1;
 
     }
   }
