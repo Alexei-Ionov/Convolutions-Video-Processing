@@ -260,8 +260,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }   
       }
     }
-  }
-  uint32_t leftover = (row_diff + 1) % NUM_THREADS;
+  } 
+  uint32_t num_threads = 8;
+  uint32_t leftover = (row_diff + 1) % num_threads;
   if (leftover != 0) {       //as long as there is even one row left to go... 
     #pragma omp parallel num_threads(leftover)
     {
