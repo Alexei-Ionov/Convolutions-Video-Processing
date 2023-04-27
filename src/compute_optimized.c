@@ -85,6 +85,9 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
   __m256i start_vec, end_vec, order_vector;
   order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
   while (end - start >= REQ_DIFF) { 
+    printf("%d", start);
+    printf("%d", end);
+    printf("%s", "\n");
     start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
     end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
 
@@ -96,6 +99,9 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     end -= 8;
     start += 8;
   }
+  printf("%d", start);
+  printf("%d", end);
+  printf("%s", "\n");
   int32_t temp;
   while (start < end) { 
     temp = row_ptr[end];
