@@ -158,7 +158,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // }
 
   for (; row < num_rows_b; row++) { 
-    if (num_cols_b >= 40) { 
+    if (num_cols_b >= THRESHOLD) { 
        flip_horizantal_SIMD(row, num_cols_b, b_ptr);
     } else { 
       flip_horizontal_naive(row, num_cols_b, b_ptr);
