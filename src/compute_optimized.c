@@ -198,11 +198,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-    // print_matrix(a_ptr, num_rows_a, num_cols_a);
-    // printf("%s", "\n");
-    // print_matrix(b_ptr, num_rows_b, num_cols_b);
-    // printf("%s", "\n");
-    
+  print_matrix(a_ptr, num_rows_a, num_cols_a);
+  printf("%s", "\n");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  printf("%s", "\n");
+  
 
         
     ///NOTE: im assuming that the size of res is AT LEAST 8.
@@ -254,8 +254,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       {
         int thread_num = omp_get_thread_num();
         int num_threads = omp_get_num_threads();
-        // printf("%s", "num threads:");
-        // printf("%d", num_threads);
+        printf("%s", "num threads:");
+        printf("%d", num_threads);
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
@@ -279,9 +279,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }
       }
   }
-  // printf("%s", "res:");
-  // printf("%s", "\n");
-  // print_matrix(res, row_diff + 1, col_diff + 1);
+  printf("%s", "res:");
+  printf("%s", "\n");
+  print_matrix(res, row_diff + 1, col_diff + 1);
 
 
   output->data = res;
