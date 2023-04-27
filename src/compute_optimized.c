@@ -99,6 +99,7 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
     
     if (end - start - 8 < REQ_DIFF) { 
+      start += 8;
       break;
     }
     start += 8;
