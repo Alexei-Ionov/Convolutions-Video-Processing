@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 0
+#define THRESHOLD 90
 #define OFFSET 8
 #define REQ_DIFF 8
 // Computes the dot product of vec1 and vec2, both of size n
@@ -99,9 +99,13 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
     start += 8;
+    if (!cut_off) { 
+      end -= 1;
+      break;
+    }
     end -= 8;
   }
-  end -= 1;
+  
   // printf("%d", start);
   // printf("%s", "    ");
   // printf("%d", end);
