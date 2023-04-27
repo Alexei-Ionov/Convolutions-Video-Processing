@@ -7,7 +7,7 @@ def test_example(test: TestSpec):
     test.add_task(Task(Matrix.random(100, 99), Matrix.random(10, 9)))
 
 
-@Test(seed = 61)
+@Test(seed=61)
 def my_custom_test(test: TestSpec):
    
      for i in range(2, 29):
