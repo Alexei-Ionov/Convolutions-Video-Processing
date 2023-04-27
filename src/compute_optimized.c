@@ -123,6 +123,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       end -= 2;
       start += 2;
     }
+    int temp;
+    while (start < end) { 
+      temp = b_ptr[end];
+      b_ptr[end] = b_ptr[start];
+      b_ptr[start] = temp;
+      end_ptr -= 1;
+      start_ptr += 1;
+
+    }
   }
   
   if (num_cols_b > THRESHOLD) { 
