@@ -97,8 +97,11 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
 
     _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
-    end -= 8;
     start += 8;
+    if (end - start < REQ_DIFF) { 
+      break;
+    }
+    end -= 8;
   }
   printf("%d", start);
   printf("%s", "    ");
