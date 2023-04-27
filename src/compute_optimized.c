@@ -203,8 +203,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   printf("%s", "\n");
   
-
-        
     ///NOTE: im assuming that the size of res is AT LEAST 8.
   if (row_diff >= 7) { 
     #pragma omp parallel 
@@ -254,12 +252,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       {
         int thread_num = omp_get_thread_num();
         int num_threads = omp_get_num_threads();
-        printf("%s", "num threads:");
-        printf("%d", num_threads);
+        printf("%s", "thread ID:");
+        printf("%d", thread_num);
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
-        if (finish > row_diff) {
+        if (finish > (row_diff + 1)) {
           finish = row_diff;
         }
         for (; start < finish; start++) {
