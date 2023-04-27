@@ -269,28 +269,26 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     {
       int thread_num = omp_get_thread_num();
       int num_threads = omp_get_num_threads();
-      uint32_t work = 1;           //might not divide perfectly so need to do manual work afterword
-      uint32_t start = (work * thread_num) + cut_off;
-      uint32_t finish = start + work;
+      uint32_t start = thread_num + cut_off;
+      // uint32_t finish = start + work;
       
-      if (finish > (row_diff + 1)) {
-        finish = row_diff + 1;
-      }
-      for (; start < finish; start++) {
-        uint32_t col = 0;
-        for (; col <= col_diff; col++) { 
-          uint32_t b_ptr_index = 0; 
-          int32_t local = 0;
-          uint32_t row = 0; 
-          uint32_t a_ptr_index = start * num_cols_a;
-          for (; row < num_rows_b; row++) {
-            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            b_ptr_index += num_cols_b;
-            a_ptr_index += num_cols_a;
-          }
-          res[(start * (col_diff + 1)) + col] = local;
-        }   
-      }
+      // if (finish > (row_diff + 1)) {
+      //   finish = row_diff + 1;
+      // }
+     
+      uint32_t col = 0;
+      for (; col <= col_diff; col++) { 
+        uint32_t b_ptr_index = 0; 
+        int32_t local = 0;
+        uint32_t row = 0; 
+        uint32_t a_ptr_index = start * num_cols_a;
+        for (; row < num_rows_b; row++) {
+          local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+          b_ptr_index += num_cols_b;
+          a_ptr_index += num_cols_a;
+        }
+        res[(start * (col_diff + 1)) + col] = local;
+      }   
     }
   }
   output->data = res;
