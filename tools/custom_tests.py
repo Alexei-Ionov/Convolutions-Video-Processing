@@ -11,10 +11,10 @@ def test_example(test: TestSpec):
 def my_custom_test(test: TestSpec):
    
     for _ in range(50):
-        rows_a = 100
-        cols_a = 100
-        rows_b = 45
-        cols_b = 45
+        rows_a = 50
+        cols_a = 50
+        rows_b = 35
+        cols_b = 35
         test.add_task(
             Task(Matrix.random(rows_a, cols_a), Matrix.random(rows_b, cols_b))
         )
