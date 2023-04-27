@@ -273,7 +273,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
     }
     uint32_t leftover = ((row_diff + 1) / 8) * 8;
-    for (; leftover < row_diff; leftover++) {
+    for (; leftover < row_diff + 1; leftover++) {
       uint32_t col = 0;
       for (; col <= col_diff; col++) { 
         uint32_t b_ptr_index = 0; 
