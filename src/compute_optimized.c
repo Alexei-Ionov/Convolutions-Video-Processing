@@ -198,10 +198,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  print_matrix(a_ptr, num_rows_a, num_cols_a);
-  printf("%s", "\n");
-  print_matrix(b_ptr, num_rows_b, num_cols_b);
-  printf("%s", "\n");
+  // print_matrix(a_ptr, num_rows_a, num_cols_a);
+  // printf("%s", "\n");
+  // print_matrix(b_ptr, num_rows_b, num_cols_b);
+  // printf("%s", "\n");
   
     ///NOTE: im assuming that the size of res is AT LEAST 8.
   if (row_diff >= 7) { 
@@ -212,8 +212,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
       int start = work * thread_num;
       int finish = start + work;
-      if (finish > row_diff) {
-        finish = row_diff;
+      
+      if (finish > (row_diff + 1)) {
+        finish = row_diff + 1;
       }
       for (; start < finish; start++) {
         int col = 0;
@@ -223,11 +224,19 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
           int row = 0; 
           int a_ptr_index = start * num_cols_a;
           for (; row < num_rows_b; row++) {
-            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            int val = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            local += val;
             b_ptr_index += num_cols_b;
             a_ptr_index += num_cols_a;
+            
           }
-          res[((start + 1) * (col + 1)) - 1] = local;
+          //#pragma omp critical 
+          // printf("%d", thread_num);
+          // printf("%s", "    ");
+          //printf("%d", ((start + 1) * (col + 1)) - 1);              
+          // printf("%s", "\n");
+
+          res[(start * (col_diff + 1)) + col] = local;
         }   
       }
     }
@@ -244,7 +253,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
           b_ptr_index += num_cols_b;
           a_ptr_index += num_cols_a;
         }
-        res[((leftover + 1) * (col + 1)) - 1] = local;
+        res[(start * (col_diff + 1)) + col] = local;
         }   
       }
     } else { 
@@ -284,9 +293,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }
       }
   }
-  printf("%s", "res:");
-  printf("%s", "\n");
-  print_matrix(res, row_diff + 1, col_diff + 1);
+  // printf("%s", "res:");
+  // printf("%s", "\n");
+  // print_matrix(res, row_diff + 1, col_diff + 1);
 
 
   output->data = res;
