@@ -220,53 +220,151 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   res = malloc(sizeof(int32_t) * size_of_res);
 
-  uint32_t row_a = 0;
-  int index = 0;
-  int32_t local;
-  int b_ptr_index;
-  uint32_t row_a2; 
+  // uint32_t row_a = 0;
+  // int index = 0;
+
+  // int b_ptr_index;
+  // uint32_t row_a2; 
   
-  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-    int col = 0;
-    for (; col <= col_diff; col++) { 
-      //row = 0
-      b_ptr_index = 0; 
-      row_a2 = row_a;
-      local = 0;
-      if (num_rows_b > THRESHOLD) { 
-        #pragma omp parallel 
-        { 
+  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+  //   int col = 0;
+  //   for (; col <= col_diff; col++) { 
+  //     b_ptr_index = 0; 
+  //     row_a2 = row_a;
+  //     int32_t local = 0;
+  //     int row = 0; 
+  //     for (; row < num_rows_b; row++) {
+  //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+  //       row_a2 += 1;
+  //       b_ptr_index += num_cols_b;
+  //     }
+  //     res[index] = local;
+  //     index += 1;
+  //   }
+  // }
+
+
+      // if (num_rows_b > 8) { 
+      //   #pragma omp parallel 
+      //   { 
           
-          int thread_num = omp_get_thread_num();
-          int num_threads = omp_get_num_threads();
-          int work = num_rows_b / num_threads;
-          int start = thread_num * work;
-          int finish = start + work; 
-          if (finish > num_rows_b) { 
-            finish = num_rows_b;
-          }
-          for (; start < finish; start++) { 
-            local += dot(num_cols_b, &(a_ptr[((row_a + start) * num_cols_a) + col]), &(b_ptr[start]));
-          }
+      //     int thread_num = omp_get_thread_num();
+      //     int num_threads = omp_get_num_threads();
+      //     int work = num_rows_b / num_threads;
+      //     int start = thread_num * work;
+      //     int finish = start + work; 
+      //     if (finish > num_rows_b) { 
+      //       finish = num_rows_b;
+      //     }
+      //     for (; start < finish; start++) { 
+      //       local += dot(num_cols_b, &(a_ptr[((row_a + start) * num_cols_a) + col]), &(b_ptr[start]));
+      //     }
+      //   }
+      //   int left_over = 8 * (num_rows_b / 8);
+      //   for (; left_over < num_rows_b; left_over++) {
+      //     local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+      //     row_a2 += 1;
+      //     b_ptr_index += num_cols_b;
+      //   }
+      // } else { 
+      //   int row = 0;
+      //   for (; row < num_rows_b; row++) {
+      //     local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+      //     row_a2 += 1;
+      //     b_ptr_index += num_cols_b;
+      //   }
+    //   // }
+    // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+    //   int col = 0;
+    //   for (; col <= col_diff; col++) { 
+    //     b_ptr_index = 0; 
+    //     row_a2 = row_a;
+    //     int32_t local = 0;
+    //     int row = 0; 
+    //     for (; row < num_rows_b; row++) {
+    //       local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+    //       row_a2 += 1;
+    //       b_ptr_index += num_cols_b;
+    //     }
+    //     res[index] = local;
+    //     index += 1;
+    //   }
+    // }
+
+        
+    ///NOTE: im assuming that the size of res is AT LEAST 8.
+    if (row_diff >= 7) { 
+      #pragma omp parallel 
+      {
+        int thread_num = omp_get_thread_num();
+        int num_threads = omp_get_num_threads();
+        int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+        int start = work * thread_num;
+        int finish = start + work;
+        if (finish > row_diff) {
+          finish = row_diff;
         }
-        int left_over = 8 * (num_rows_b / 8);
-        for (; left_over < num_rows_b; left_over++) {
-          local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-          row_a2 += 1;
-          b_ptr_index += num_cols_b;
-        }
-      } else { 
-        int row = 0;
-        for (; row < num_rows_b; row++) {
-          local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-          row_a2 += 1;
-          b_ptr_index += num_cols_b;
+        for (; start < finish; start++) {
+          int col = 0;
+          for (; col <= col_diff; col++) { 
+            int b_ptr_index = 0; 
+            int32_t local = 0;
+            int row = 0; 
+            int a_ptr_index = start * num_cols_a;
+            for (; row < num_rows_b; row++) {
+              local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+              b_ptr_index += num_cols_b;
+              a_ptr_index += num_cols_a;
+            }
+            res[((start + 1) * (col + 1)) - 1] = local;
+          }   
         }
       }
-    res[index] = local;
-    index += 1;
-    }
-  }
+      int leftover = ((row_diff + 1) / 8) * 8;
+      for (; leftover < finish; leftover++) {
+        int col = 0;
+        for (; col <= col_diff; col++) { 
+          int b_ptr_index = 0; 
+          int32_t local = 0;
+          int row = 0; 
+          int a_ptr_index = leftover * num_cols_a;
+          for (; row < num_rows_b; row++) {
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            b_ptr_index += num_cols_b;
+            a_ptr_index += num_cols_a;
+          }
+          res[((leftover + 1) * (col + 1)) - 1] = local;
+          }   
+        }
+      } else { 
+        #pragma omp parallel num_threads(row_diff + 1)
+        {
+          int thread_num = omp_get_thread_num();
+          int num_threads = omp_get_num_threads();
+          int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+          int start = work * thread_num;
+          int finish = start + work;
+          if (finish > row_diff) {
+            finish = row_diff;
+          }
+          for (; start < finish; start++) {
+            int col = 0;
+            for (; col <= col_diff; col++) { 
+              int b_ptr_index = 0; 
+              int32_t local = 0;
+              int row = 0; 
+              int a_ptr_index = start * num_cols_a;
+              for (; row < num_rows_b; row++) {
+                local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+                b_ptr_index += num_cols_b;
+                a_ptr_index += num_cols_a;
+              }
+              res[((start + 1) * (col + 1)) - 1] = local;
+            }   
+          }
+        }
+      }
+
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
