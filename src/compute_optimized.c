@@ -276,9 +276,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       uint32_t start = thread_num + cut_off;
       #pragma omp critical
         printf("%d", row_diff + 1);
-        printf("%s", "   ")
+        printf("%s", "   ");
         printf("%d", num_threads);
-        printf("%s", "\n")
+        printf("%s", "\n");
       // uint32_t finish = start + 1;
       
       // if (finish > (row_diff + 1)) {
