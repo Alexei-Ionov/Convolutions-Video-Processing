@@ -10,7 +10,7 @@ def test_example(test: TestSpec):
 @Test()
 def my_custom_test(test: TestSpec):
    
-     for i in range(2, 29):
+     for i in range(28, 1, -1):
         rows_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
         cols_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
         rows_b = randint(math.floor(rows_a / 4), math.floor(rows_a / 2))
