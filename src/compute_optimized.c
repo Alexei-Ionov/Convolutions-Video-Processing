@@ -157,8 +157,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       __m256i start_vec, end_vec, order_vector;
       order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
       while (end - start >= REQ_DIFF) { 
-        start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
-        end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
+        start_vec = _mm256_loadu_si256 ((__m256i const *) (b_ptr + start));
+        end_vec = _mm256_loadu_si256 ((__m256i const *) (b_ptr + end));
         start_vec = _mm256_permutevar8x32_epi32(start_vec, order_vector);
         end_vec = _mm256_permutevar8x32_epi32(end_vec, order_vector);
         _mm256_storeu_si256 ((__m256i*) (b_ptr + start), end_vec);
@@ -173,7 +173,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       int32_t temp;
       while (start < end) { 
         temp = b_ptr[end];
-        rowb_ptr_ptr[end] = b_ptr[start];
+        b_ptr[end] = b_ptr[start];
         b_ptr[start] = temp;
         start += 1;
         end -= 1;
