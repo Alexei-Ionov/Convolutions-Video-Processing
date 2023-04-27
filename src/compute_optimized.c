@@ -83,7 +83,8 @@ void test_flip(int32_t *a, int32_t *b, uint32_t size) {
   uint32_t index = 0;
   for (; index < size; index++) { 
     if (a[index] != b[size - index - 1]) { 
-      printf("%s", "Doesn't match at index:", "%d", index);
+      printf("%s", "Doesn't match at index:");
+      printf("%d", index);
       printf("%s", "\n");
     }
   }
