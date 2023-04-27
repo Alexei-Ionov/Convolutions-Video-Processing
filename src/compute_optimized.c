@@ -234,7 +234,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     #pragma omp parallel 
     {
       int thread_num = omp_get_thread_num();
-      int num_threads = omp_get_num_threads;
+      int num_threads = omp_get_num_threads();
      
       uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
       uint32_t start = work * thread_num;
@@ -266,7 +266,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     #pragma omp parallel num_threads(leftover)
     {
       int thread_num = omp_get_thread_num();
-      int num_threads = omp_get_num_threads;
+      int num_threads = omp_get_num_threads();
       uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
       uint32_t start = work * thread_num;
       uint32_t finish = start + work;
