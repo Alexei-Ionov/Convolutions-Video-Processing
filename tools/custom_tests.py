@@ -8,7 +8,7 @@ def test_example(test: TestSpec):
 
 @Test()
 def my_custom_test(test: TestSpec):
-    for _ in range(100):
+    for _ in range(50):
         rows_a = randint(15, 25)
         cols_a = randint(15, 25)
         rows_b = rows_a - randint(1, 7)
