@@ -302,21 +302,3 @@ int execute_task(task_t *task) {
   free(output_matrix);
   return 0;
 }
-
-// int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
-  // for (int h = 0; h < size_of_res; h++) {
-  //   temp[h] = res[h];
-  // }
-  // naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
-
-    // if (check_solution(res, temp, size_of_res)) { 
-  //   // printf("%s", "faulty res:");
-  //   // printf("%s", "\n");
-  //   // print_matrix(res, row_diff + 1, col_diff + 1);
-  //   // printf("%s", "real res:");
-  //   // printf("%s", "\n");
-  //   //print_matrix(temp, row_diff + 1, col_diff + 1);
-  //   printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
-
-  //   printf("%s", "\n");
-  // }
