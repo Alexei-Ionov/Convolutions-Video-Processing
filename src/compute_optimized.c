@@ -237,8 +237,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         #pragma omp parallel 
         { 
           
-          int thread_num = omp_get_num_thread();
-          int num_threads = omp_get_thread_num();
+          int thread_num = omp_get_thread_num();
+          int num_threads = omp_get_num_threads();
           int work = num_rows_b / num_threads;
           int start = thread_num * num_rows_b;
           int finish = start + work; 
@@ -251,14 +251,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             local += val;
             
           }
-
-          // #pragma omp for reduction(+:local, row_a2, b_ptr_index)
-          // for (int row = 0; row < num_rows_b; row++) { 
-          //   int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-          //   local += val;
-          //   row_a2 += 1;
-          //   b_ptr_index += num_cols_b;
-          // }
         }
         int left_over = 8 * num_rows_b;
         for (; left_over < num_rows_b; left_over++) {
@@ -285,6 +277,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   return 0;
 }
+   // #pragma omp for reduction(+:local, row_a2, b_ptr_index)
+          // for (int row = 0; row < num_rows_b; row++) { 
+          //   int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+          //   local += val;
+          //   row_a2 += 1;
+          //   b_ptr_index += num_cols_b;
+          // }
 
 // Executes a task
 int execute_task(task_t *task) {
