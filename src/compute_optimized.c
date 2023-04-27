@@ -240,13 +240,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
       uint32_t start = work * thread_num;
       uint32_t finish = start + work;
-      
-      if (finish > (row_diff + 1)) {
-        finish = row_diff + 1;
-      }
       if (thread_num == num_threads - 1) { 
         finish += 1;                      //accounts for hte last row to be completed :D
       }
+      if (finish > (row_diff + 1)) {
+        finish = row_diff + 1;
+      }
+      
       for (; start < finish; start++) {
         uint32_t col = 0;
         for (; col <= col_diff; col++) { 
