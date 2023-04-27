@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 90
+#define THRESHOLD 0
 #define OFFSET 8
 #define REQ_DIFF 8
 // Computes the dot product of vec1 and vec2, both of size n
