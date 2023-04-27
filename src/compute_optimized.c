@@ -228,18 +228,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
     }
     uint32_t leftover = ((row_diff + 1) / 8) * 8;
-    uint32_t threads_needed = (row_diff + 1) - leftover;
-    #pragma omp parallel num_threads(threads_needed)
-    {
-      int thread_num = omp_get_thread_num();
-      int num_threads = omp_get_num_threads();
-      uint32_t start = leftover + thread_num;
-      uint32_t finish = start + 1;
-      
-      if (finish > (row_diff + 1)) {
-        finish = row_diff + 1;
-      }
-      
+    for (; leftover < row_diff + 1; leftover++) {
       uint32_t col = 0;
       for (; col <= col_diff; col++) { 
         uint32_t b_ptr_index = 0; 
@@ -251,9 +240,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
           b_ptr_index += num_cols_b;
           a_ptr_index += num_cols_a;
         }
-        res[(start * (col_diff + 1)) + col] = local;
-          
-      }
+        res[(leftover * (col_diff + 1)) + col] = local;
+      }   
     }
   } else { 
     #pragma omp parallel num_threads(row_diff + 1)
