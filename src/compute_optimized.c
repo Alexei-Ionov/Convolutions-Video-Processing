@@ -231,11 +231,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
-  for (int h = 0; h < size_of_res; h++) {
-    temp[h] = res[h];
-  }
-  naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
+  // int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
+  // for (int h = 0; h < size_of_res; h++) {
+  //   temp[h] = res[h];
+  // }
+  // naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
 
   // print_matrix(a_ptr, num_rows_a, num_cols_a);
   // printf("%s", "\n");
@@ -248,23 +248,22 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     {
       int thread_num = omp_get_thread_num();
       int num_threads = omp_get_num_threads();
-      int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
-      int start = work * thread_num;
-      int finish = start + work;
+      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      uint32_t start = work * thread_num;
+      uint32_t finish = start + work;
       
       if (finish > (row_diff + 1)) {
         finish = row_diff + 1;
       }
       for (; start < finish; start++) {
-        int col = 0;
+        uint32_t col = 0;
         for (; col <= col_diff; col++) { 
-          int b_ptr_index = 0; 
+          uint32_t b_ptr_index = 0; 
           int32_t local = 0;
-          int row = 0; 
-          int a_ptr_index = start * num_cols_a;
+          uint32_t row = 0; 
+          uint32_t a_ptr_index = start * num_cols_a;
           for (; row < num_rows_b; row++) {
-            int val = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            local += val;
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
             b_ptr_index += num_cols_b;
             a_ptr_index += num_cols_a;
             
@@ -273,14 +272,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }   
       }
     }
-    int leftover = ((row_diff + 1) / 8) * 8;
+    uint32_t leftover = ((row_diff + 1) / 8) * 8;
     for (; leftover < row_diff; leftover++) {
-      int col = 0;
+      uint32_t col = 0;
       for (; col <= col_diff; col++) { 
-        int b_ptr_index = 0; 
+        uint32_t b_ptr_index = 0; 
         int32_t local = 0;
-        int row = 0; 
-        int a_ptr_index = leftover * num_cols_a;
+        uint32_t row = 0; 
+        uint32_t a_ptr_index = leftover * num_cols_a;
         for (; row < num_rows_b; row++) {
           local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
           b_ptr_index += num_cols_b;
@@ -324,17 +323,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }
     }
   }
-  // printf("%s", "res:");
-  // printf("%s", "\n");
-  // print_matrix(res, row_diff + 1, col_diff + 1);
-  if (!check_solution(res, temp, size_of_res)) { 
-    printf("%s", "faulty res:");
-    printf("%s", "\n");
-    print_matrix(res, row_diff + 1, col_diff + 1);
-    printf("%s", "real res:");
-    printf("%s", "\n");
-    print_matrix(temp, row_diff + 1, col_diff + 1);
-  }
+
+  // if (!check_solution(res, temp, size_of_res)) { 
+  //   printf("%s", "faulty res:");
+  //   printf("%s", "\n");
+  //   print_matrix(res, row_diff + 1, col_diff + 1);
+  //   printf("%s", "real res:");
+  //   printf("%s", "\n");
+  //   print_matrix(temp, row_diff + 1, col_diff + 1);
+  // }
 
 
   output->data = res;

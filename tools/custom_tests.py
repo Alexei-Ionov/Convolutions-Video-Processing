@@ -8,11 +8,11 @@ def test_example(test: TestSpec):
 
 @Test()
 def my_custom_test(test: TestSpec):
-    for _ in range(50):
-        rows_a = randint(15, 25)
-        cols_a = randint(15, 25)
-        rows_b = rows_a - randint(1, 7)
-        cols_b = cols_a - randint(1,7)
+   for _ in range(100):
+        rows_a = randint(100, 200)
+        cols_a = randint(100, 200)
+        rows_b = randint(5, 100)
+        cols_b = randint(5, 100)
         test.add_task(
             Task(Matrix.random(rows_a, cols_a), Matrix.random(rows_b, cols_b))
         )
