@@ -114,7 +114,30 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
     start_ptr += num_col;
   }
 }
+void naive_solution(int32_t* res, int num_rows_b, int num_rows_a, int col_diff, ) { 
+  uint32_t row_a = 0;
+  col = 0;
+  int index = 0;
+  int32_t local;
+  int b_ptr_index;
 
+  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+    col = 0;
+    for (; col <= col_diff; col++) { 
+      row = 0;
+      local = 0;
+      int row_a2 = row_a;
+      b_ptr_index = 0;
+      for (; row < num_rows_b; row++) {
+        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+        row_a2 += 1;
+        b_ptr_index += num_cols_b;
+      }
+      res[index] = local;
+      index += 1;
+    }
+  }
+}
 // Computes the convolution of two matrices
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
@@ -198,6 +221,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
+  int32_t temp* = malloc(sizeof(int32_t) * size_of_res);
+  for (int h = 0; h < size_of_res; h++) {
+    temp[h] = res[h];
+  }
+
   // print_matrix(a_ptr, num_rows_a, num_cols_a);
   // printf("%s", "\n");
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
@@ -255,26 +283,24 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     {
       int thread_num = omp_get_thread_num();
       int num_threads = omp_get_num_threads();
-      int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
-      int start = work * thread_num;
-      int finish = start + work;
+      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      uint32_t start = work * thread_num;
+      uint32_t finish = start + work;
       
       if (finish > (row_diff + 1)) {
         finish = row_diff + 1;
       }
       for (; start < finish; start++) {
-        int col = 0;
+        uint32_t col = 0;
         for (; col <= col_diff; col++) { 
-          int b_ptr_index = 0; 
+          uint32_t b_ptr_index = 0; 
           int32_t local = 0;
-          int row = 0; 
-          int a_ptr_index = start * num_cols_a;
+          uint32_t row = 0; 
+          uint32_t a_ptr_index = start * num_cols_a;
           for (; row < num_rows_b; row++) {
-            int val = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            local += val;
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
             b_ptr_index += num_cols_b;
             a_ptr_index += num_cols_a;
-            
           }
           //#pragma omp critical 
           // printf("%d", thread_num);
@@ -292,10 +318,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // print_matrix(res, row_diff + 1, col_diff + 1);
 
 
+
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
   (*output_matrix) = output;
+
+  
+
+
 
   return 0;
 }
