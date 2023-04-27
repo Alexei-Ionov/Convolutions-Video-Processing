@@ -293,11 +293,55 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
         
     ///NOTE: im assuming that the size of res is AT LEAST 8.
-    if (row_diff >= 7) { 
-      #pragma omp parallel 
+  if (row_diff >= 7) { 
+    #pragma omp parallel 
+    {
+      int thread_num = omp_get_thread_num();
+      int num_threads = omp_get_num_threads();
+      int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      int start = work * thread_num;
+      int finish = start + work;
+      if (finish > row_diff) {
+        finish = row_diff;
+      }
+      for (; start < finish; start++) {
+        int col = 0;
+        for (; col <= col_diff; col++) { 
+          int b_ptr_index = 0; 
+          int32_t local = 0;
+          int row = 0; 
+          int a_ptr_index = start * num_cols_a;
+          for (; row < num_rows_b; row++) {
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            b_ptr_index += num_cols_b;
+            a_ptr_index += num_cols_a;
+          }
+          res[((start + 1) * (col + 1)) - 1] = local;
+        }   
+      }
+    }
+    int leftover = ((row_diff + 1) / 8) * 8;
+    for (; leftover < row_diff; leftover++) {
+      int col = 0;
+      for (; col <= col_diff; col++) { 
+        int b_ptr_index = 0; 
+        int32_t local = 0;
+        int row = 0; 
+        int a_ptr_index = leftover * num_cols_a;
+        for (; row < num_rows_b; row++) {
+          local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+          b_ptr_index += num_cols_b;
+          a_ptr_index += num_cols_a;
+        }
+        res[((leftover + 1) * (col + 1)) - 1] = local;
+        }   
+      }
+    } else { 
+      #pragma omp parallel num_threads(row_diff + 1)
       {
         int thread_num = omp_get_thread_num();
         int num_threads = omp_get_num_threads();
+        printf("%d", num_threads);
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
@@ -320,50 +364,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
           }   
         }
       }
-      int leftover = ((row_diff + 1) / 8) * 8;
-      for (; leftover < row_diff; leftover++) {
-        int col = 0;
-        for (; col <= col_diff; col++) { 
-          int b_ptr_index = 0; 
-          int32_t local = 0;
-          int row = 0; 
-          int a_ptr_index = leftover * num_cols_a;
-          for (; row < num_rows_b; row++) {
-            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            b_ptr_index += num_cols_b;
-            a_ptr_index += num_cols_a;
-          }
-          res[((leftover + 1) * (col + 1)) - 1] = local;
-          }   
-        }
-      } else { 
-        #pragma omp parallel num_threads(row_diff + 1)
-        {
-          int thread_num = omp_get_thread_num();
-          int num_threads = omp_get_num_threads();
-          int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
-          int start = work * thread_num;
-          int finish = start + work;
-          if (finish > row_diff) {
-            finish = row_diff;
-          }
-          for (; start < finish; start++) {
-            int col = 0;
-            for (; col <= col_diff; col++) { 
-              int b_ptr_index = 0; 
-              int32_t local = 0;
-              int row = 0; 
-              int a_ptr_index = start * num_cols_a;
-              for (; row < num_rows_b; row++) {
-                local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-                b_ptr_index += num_cols_b;
-                a_ptr_index += num_cols_a;
-              }
-              res[((start + 1) * (col + 1)) - 1] = local;
-            }   
-          }
-        }
-      }
+  }
+  print_matrix(res, row_diff + 1, col_diff + 1);
+
 
   output->data = res;
   output->cols = col_diff + 1;
