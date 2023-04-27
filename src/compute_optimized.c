@@ -137,13 +137,13 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   int row = 0;
-  printf("%s", "before: \n")
+  printf("%s", "before: \n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   for (; row < num_rows_b; row++) { 
     //flip_horizontal_naive(row, num_cols_b, b_ptr);
     flip_horizantal_SIMD(row, num_cols_b, b_ptr);
   }
-  printf("%s", "after: \n")
+  printf("%s", "after: \n");
   print_matrix(b_ptr, num_rows_b, num_cols_b);
   
   if (num_cols_b > THRESHOLD) { 
