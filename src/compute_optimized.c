@@ -114,9 +114,9 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
     start_ptr += num_col;
   }
 }
-void naive_solution(int32_t* res, int num_rows_b, int num_rows_a, int col_diff) { 
+void naive_solution(int32_t* res, uint32_t num_rows_b, uint32_t num_cols_a, uint32_t num_cols_b, uint32_t num_rows_a, uint32_t col_diff) { 
   uint32_t row_a = 0;
-  col = 0;
+  uint32_t col = 0;
   int index = 0;
   int32_t local;
   int b_ptr_index;
