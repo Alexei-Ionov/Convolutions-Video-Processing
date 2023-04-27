@@ -331,7 +331,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     // printf("%s", "real res:");
     // printf("%s", "\n");
     //print_matrix(temp, row_diff + 1, col_diff + 1);
-    printf("%d", row_diff);
+    printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
+
     printf("%s", "\n");
     
   }
