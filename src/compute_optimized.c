@@ -371,7 +371,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }
       }
   }
-  printf("%s", "res:", "\n");
+  printf("%s", "res:");
+  printf("%s", "\n");
   print_matrix(res, row_diff + 1, col_diff + 1);
 
 
