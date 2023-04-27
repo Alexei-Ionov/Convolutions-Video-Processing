@@ -32,7 +32,7 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
 
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
-  __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
+  __m256i res = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, 0);
   uint32_t cut_off = n - (n % 16);
   int idx = 0;
   __m256i vector1, vector2;
@@ -268,9 +268,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             int row = 0; 
             int a_ptr_index = start * num_cols_a;
             for (; row < num_rows_b; row++) {
-              local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+              int val = dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+              local += val;
               b_ptr_index += num_cols_b;
               a_ptr_index += num_cols_a;
+              printf("%d", val);
+              printf("%s", "\n");
             }
             res[((start + 1) * (col + 1)) - 1] = local;
           }   
