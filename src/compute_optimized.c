@@ -2,7 +2,7 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 0
+#define THRESHOLD 90
 #define OFFSET 8
 #define REQ_DIFF 8
 // Computes the dot product of vec1 and vec2, both of size n
@@ -85,11 +85,7 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
   __m256i start_vec, end_vec, order_vector;
   int cut_off = num_cols / 16;
   order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
-  for (; cut_off > 0; cut_off--) { 
-    // printf("%d", start);
-    // printf("%s", "    ");
-    // printf("%d", end);
-    // printf("%s", "\n");
+  while (end - start >= REQ_DIFF) { 
     start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
     end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
 
@@ -99,17 +95,12 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
     start += 8;
-    if (cut_off == 0) { 
+    if (end - start < 16) { 
       end -= 1;
       break;
     }
     end -= 8;
   }
-  
-  // printf("%d", start);
-  // printf("%s", "    ");
-  // printf("%d", end);
-  // printf("%s", "\n");
   int32_t temp;
   while (start < end) { 
     temp = row_ptr[end];
@@ -161,7 +152,32 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
-       flip_horizantal_SIMD(row, num_cols_b, b_ptr);
+      int start = row * num_cols_b;
+      int end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
+      __m256i start_vec, end_vec, order_vector;
+      order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
+      while (end - start >= REQ_DIFF) { 
+        start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
+        end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
+        start_vec = _mm256_permutevar8x32_epi32(start_vec, order_vector);
+        end_vec = _mm256_permutevar8x32_epi32(end_vec, order_vector);
+        _mm256_storeu_si256 ((__m256i*) (b_ptr + start), end_vec);
+        _mm256_storeu_si256 ((__m256i*) (b_ptr + end), start_vec);
+        start += 8;
+        if (end - start < 16) { 
+          end -= 1;
+          break;
+        }
+        end -= 8;
+      }
+      int32_t temp;
+      while (start < end) { 
+        temp = b_ptr[end];
+        rowb_ptr_ptr[end] = b_ptr[start];
+        b_ptr[start] = temp;
+        start += 1;
+        end -= 1;
+      }
     } else { 
       flip_horizontal_naive(row, num_cols_b, b_ptr);
     }
