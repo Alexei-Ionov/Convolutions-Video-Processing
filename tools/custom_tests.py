@@ -1,5 +1,6 @@
-from framework import Test, TestSpec, Task, Matrix, randint
+import math
 
+from framework import Test, TestSpec, Task, Matrix, randint
 
 @Test(seed=100)
 def test_example(test: TestSpec):
