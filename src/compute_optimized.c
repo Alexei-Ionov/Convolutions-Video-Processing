@@ -4,36 +4,9 @@
 #include "compute.h"
 #define THRESHOLD 90
 #define OFFSET 8
+#define REQ_DIFF 16
 // Computes the dot product of vec1 and vec2, both of size n
-int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
-  // TODO: implement dot product of vec1 and vec2, both of size n
-  __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
-  uint32_t cut_off = n - (n % 16);
-  int idx = 0;
-  __m256i vector1, vector2;
-  uint32_t i = 0;
-  for (; i < cut_off; i += 16) { 
-    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
-    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
-    vector1 = _mm256_mullo_epi32 (vector1, vector2);
-    res = _mm256_add_epi32(res, vector1);
 
-    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i + 8));
-    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i + 8));
-    vector1 = _mm256_mullo_epi32 (vector1, vector2);
-    res = _mm256_add_epi32(res, vector1);
-  }
-
-  uint32_t j = cut_off;
-  int32_t final = 0;
-  for (; j < n; j++) { 
-    final += (vec1[j] * vec2[j]);
-  }
-
-  int32_t temp[8];
-  _mm256_storeu_si256((__m256i *) temp, res);
-return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
-}
 
 void print_matrix(int32_t* matrix, uint32_t rows, uint32_t cols) {
     for (uint32_t i = 0; i < rows; i++) {
@@ -77,7 +50,61 @@ void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) {
   }
 }
 
+int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
+  // TODO: implement dot product of vec1 and vec2, both of size n
+  __m256i res = _mm256_set_epi32 (0, 0, 0, 0, 0, 0, 0, 0);
+  uint32_t cut_off = n - (n % 16);
+  int idx = 0;
+  __m256i vector1, vector2;
+  uint32_t i = 0;
+  for (; i < cut_off; i += 16) { 
+    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i));
+    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i));
+    vector1 = _mm256_mullo_epi32 (vector1, vector2);
+    res = _mm256_add_epi32(res, vector1);
 
+    vector1 = _mm256_loadu_si256 ((__m256i const *) (vec1 + i + 8));
+    vector2 = _mm256_loadu_si256 ((__m256i const *) (vec2 + i + 8));
+    vector1 = _mm256_mullo_epi32 (vector1, vector2);
+    res = _mm256_add_epi32(res, vector1);
+  }
+
+  uint32_t j = cut_off;
+  int32_t final = 0;
+  for (; j < n; j++) { 
+    final += (vec1[j] * vec2[j]);
+  }
+  int32_t temp[8];
+  _mm256_storeu_si256((__m256i *) temp, res);
+return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
+}
+void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) { 
+  int start = row * num_cols;
+  int end = (row * num_cols) + num_cols - 8; //-8 for size of SIMD loads
+  __m256i start_vec, end_vec, order_vector;
+  order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
+  while (end - start >= REQ_DIFF) { 
+    start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
+    end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
+
+    start_vec = _mm256_permutevar8x32_epi32(vector1, order_vector);
+    end_vec = _mm256_permutevar8x32_epi32(vector2, order_vector);
+
+    _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
+    _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
+    end -= 8;
+    start += 8;
+
+  }
+  int32_t temp;
+  while (start < end) { 
+    temp = row_ptr[end];
+    row_ptr[end] = row_ptr[start];
+    row_ptr[start] = temp;
+    start += 1;
+    end -= 1;
+  }
+}
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
   int start_ptr = col;
   int end_ptr = (row * num_col) + col;
@@ -111,27 +138,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int row = 0;
 
   for (; row < num_rows_b; row++) { 
-    int start = row * num_cols_b;
-    int end = row * num_cols_b + num_cols_b - 1;
-    while ((end - start) >= 4) { 
-      int32_t temp1 = b_ptr[end];
-      int32_t temp2 = b_ptr[end - 1];
-      b_ptr[end] = b_ptr[start];
-      b_ptr[end - 1] = b_ptr[start + 1];
-      b_ptr[start] = temp1;
-      b_ptr[start + 1] = temp2;
-      end -= 2;
-      start += 2;
-    }
-    int temp;
-    while (start < end) { 
-      temp = b_ptr[end];
-      b_ptr[end] = b_ptr[start];
-      b_ptr[start] = temp;
-      end -= 1;
-      start += 1;
-
-    }
+    //flip_horizontal_naive(row, num_cols_b, b_ptr);
+    flip_horizantal_SIMD(row, num_cols_b, b_ptr);
   }
   
   if (num_cols_b > THRESHOLD) { 
