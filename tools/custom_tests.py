@@ -8,9 +8,8 @@ def test_example(test: TestSpec):
 
 
 @Test(seed=61)
-def my_custom_test(test: TestSpec):
-   
-     for i in range(2, 29):
+def custom_tests(test: TestSpec):
+    for i in range(2, 29):
         rows_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
         cols_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
         rows_b = randint(math.floor(rows_a / 4), math.floor(rows_a / 2))
