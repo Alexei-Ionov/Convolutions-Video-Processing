@@ -163,9 +163,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *b_ptr = b_matrix->data;
  
  
-  int end_row = num_rows_b - 1;
- 
-  int row = 0;
+  uint32_t end_row = num_rows_b - 1;
+  uint32_t row = 0;
  
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
@@ -231,18 +230,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
-  for (int h = 0; h < size_of_res; h++) {
-    temp[h] = res[h];
-  }
-  naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
-
-  // print_matrix(a_ptr, num_rows_a, num_cols_a);
-  // printf("%s", "\n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-  // printf("%s", "\n");
-  
-    ///NOTE: im assuming that the size of res is AT LEAST 8.
+  // int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
+  // for (int h = 0; h < size_of_res; h++) {
+  //   temp[h] = res[h];
+  // }
+  // naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
   if (row_diff >= 7) { 
     #pragma omp parallel 
     {
@@ -312,51 +304,30 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             b_ptr_index += num_cols_b;
             a_ptr_index += num_cols_a;
           }
-          //#pragma omp critical 
-          // printf("%d", thread_num);
-          // printf("%s", "    ");
-          //printf("%d", ((start + 1) * (col + 1)) - 1);              
-          // printf("%s", "\n");
-
           res[(start * (col_diff + 1)) + col] = local;
         }   
       }
     }
   }
 
-  if (check_solution(res, temp, size_of_res)) { 
-    // printf("%s", "faulty res:");
-    // printf("%s", "\n");
-    // print_matrix(res, row_diff + 1, col_diff + 1);
-    // printf("%s", "real res:");
-    // printf("%s", "\n");
-    //print_matrix(temp, row_diff + 1, col_diff + 1);
-    printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
+  // if (check_solution(res, temp, size_of_res)) { 
+  //   // printf("%s", "faulty res:");
+  //   // printf("%s", "\n");
+  //   // print_matrix(res, row_diff + 1, col_diff + 1);
+  //   // printf("%s", "real res:");
+  //   // printf("%s", "\n");
+  //   //print_matrix(temp, row_diff + 1, col_diff + 1);
+  //   printf("%d", (row_diff + 1) - (((row_diff + 1) / 8) * 8));
 
-    printf("%s", "\n");
-    
-  }
-
-
+  //   printf("%s", "\n");
+  // }
   output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
   (*output_matrix) = output;
-
-  
-
-
-
   return 0;
 }
-   // #pragma omp for reduction(+:local, row_a2, b_ptr_index)
-          // for (int row = 0; row < num_rows_b; row++) { 
-          //   int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-          //   local += val;
-          //   row_a2 += 1;
-          //   b_ptr_index += num_cols_b;
-          // }
-
+  
 // Executes a task
 int execute_task(task_t *task) {
   matrix_t *a_matrix, *b_matrix, *output_matrix;
