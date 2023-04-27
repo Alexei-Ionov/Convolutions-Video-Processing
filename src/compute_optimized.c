@@ -28,14 +28,6 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
     start_ptr += 1;
   }
 }
-void flip(uint32_t size, int32_t *row_ptr) { 
-  uint32_t half = size / 2;
-  for (uint32_t index = 0; index < half; index++) { 
-    int32_t temp = row_ptr[index];
-    row_ptr[index] = row_ptr[size - index - 1];
-    row_ptr[size - index - 1] = temp;
-  }
-}
 
 
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
@@ -290,10 +282,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     //     index += 1;
     //   }
     // }
-    print_matrix(a_ptr, num_rows_a, num_cols_a);
-    printf("%s", "\n");
-    print_matrix(b_ptr, num_rows_b, num_cols_b);
-    printf("%s", "\n");
+
+
+
+
+    // print_matrix(a_ptr, num_rows_a, num_cols_a);
+    // printf("%s", "\n");
+    // print_matrix(b_ptr, num_rows_b, num_cols_b);
+    // printf("%s", "\n");
     
 
         
@@ -346,8 +342,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       {
         int thread_num = omp_get_thread_num();
         int num_threads = omp_get_num_threads();
-        printf("%s", "num threads:");
-        printf("%d", num_threads);
+        // printf("%s", "num threads:");
+        // printf("%d", num_threads);
         int work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
         int start = work * thread_num;
         int finish = start + work;
@@ -371,9 +367,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         }
       }
   }
-  printf("%s", "res:");
-  printf("%s", "\n");
-  print_matrix(res, row_diff + 1, col_diff + 1);
+  // printf("%s", "res:");
+  // printf("%s", "\n");
+  // print_matrix(res, row_diff + 1, col_diff + 1);
 
 
   output->data = res;
