@@ -258,7 +258,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         int start = work * thread_num;
         int finish = start + work;
         if (finish > (row_diff + 1)) {
-          finish = row_diff;
+          finish = row_diff + 1;
         }
         for (; start < finish; start++) {
           int col = 0;
