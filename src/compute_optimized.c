@@ -233,7 +233,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       b_ptr_index = 0; 
       row_a2 = row_a;
       local = 0;
-      if (num_rows_b > 8) { 
+      if (num_rows_b > THRESHOLD) { 
         #pragma omp parallel 
         { 
           
