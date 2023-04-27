@@ -291,9 +291,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     //   }
     // }
     print_matrix(a_ptr, num_rows_a, num_cols_a);
-    printf("%s", "\n")
+    printf("%s", "\n");
     print_matrix(b_ptr, num_rows_b, num_cols_b);
-    printf("%s", "\n")
+    printf("%s", "\n");
     
 
         
