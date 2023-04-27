@@ -85,10 +85,10 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
   __m256i start_vec, end_vec, order_vector;
   order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
   while (end - start >= REQ_DIFF) { 
-    // printf("%d", start);
-    // printf("%s", "    ");
-    // printf("%d", end);
-    // printf("%s", "\n");
+    printf("%d", start);
+    printf("%s", "    ");
+    printf("%d", end);
+    printf("%s", "\n");
     start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
     end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
 
@@ -98,16 +98,16 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
     start += 8;
-    if (end - start < 17) { 
+    if (end - start < 16) { 
       end -= 1;
       break;
     }
     end -= 8;
   }
-  // printf("%d", start);
-  // printf("%s", "    ");
-  // printf("%d", end);
-  // printf("%s", "\n");
+  printf("%d", start);
+  printf("%s", "    ");
+  printf("%d", end);
+  printf("%s", "\n");
   int32_t temp;
   while (start < end) { 
     temp = row_ptr[end];
@@ -148,23 +148,23 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   int row = 0;
-  // printf("%s", "before: \n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-  // uint32_t size = (num_cols_b * num_rows_b);
-  // int32_t *temp = malloc(sizeof(int32_t) * size);
+  printf("%s", "before: \n");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
+  uint32_t size = (num_cols_b * num_rows_b);
+  int32_t *temp = malloc(sizeof(int32_t) * size);
  
-  // for (int m = 0; m < size; m++) { 
-  //   temp[m] = b_ptr[m];
-  // }
+  for (int m = 0; m < size; m++) { 
+    temp[m] = b_ptr[m];
+  }
 
   for (; row < num_rows_b; row++) { 
     //flip_horizontal_naive(row, num_cols_b, b_ptr);
     flip_horizantal_SIMD(row, num_cols_b, b_ptr);
   }
-  // printf("%s", "after: \n");
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
+  printf("%s", "after: \n");
+  print_matrix(b_ptr, num_rows_b, num_cols_b);
 
-  // test_flip(temp, b_ptr, size);
+  test_flip(temp, b_ptr, size);
   
 
   if (num_cols_b > THRESHOLD) { 
