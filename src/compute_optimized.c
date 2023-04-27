@@ -140,6 +140,15 @@ void naive_solution(int32_t* res, int32_t* a_ptr, int32_t* b_ptr, uint32_t num_r
   }
 }
 // Computes the convolution of two matrices
+bool check_solution(int32_t* res, int32_t* temp, uint32_t size) { 
+
+  for (int i = 0; i < size; i++) { 
+    if (res[i] != temp[i]) {  
+      return false;
+    }
+  }
+  return true;
+}
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
   // output_matrix
@@ -226,6 +235,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   for (int h = 0; h < size_of_res; h++) {
     temp[h] = res[h];
   }
+  naive_solution(temp, a_ptr, b_ptr, num_rows_b, num_cols_a, num_cols_b, num_rows_a, col_diff);
 
   // print_matrix(a_ptr, num_rows_a, num_cols_a);
   // printf("%s", "\n");
@@ -317,7 +327,14 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // printf("%s", "res:");
   // printf("%s", "\n");
   // print_matrix(res, row_diff + 1, col_diff + 1);
-
+  if (!check_solution(res, temp, size_of_res)) { 
+    printf("%s", "faulty res:");
+    printf("%s", "\n");
+    print_matrix(res, row_diff + 1, col_diff + 1);
+    printf("%s", "real res:");
+    printf("%s", "\n");
+    print_matrix(temp, row_diff + 1, col_diff + 1);
+  }
 
 
   output->data = res;
