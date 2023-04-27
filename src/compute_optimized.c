@@ -151,7 +151,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // }
 
   for (; row < num_rows_b; row++) { 
-    if (num_cols_b >= 150) { 
+    if (num_cols_b >= 50) { 
       int start = row * num_cols_b;
       int end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
       __m256i start_vec, end_vec, order_vector;
@@ -183,39 +183,35 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     }
     
   }
-  int col = 0; 
-  for (; col < num_cols_b; col++) { 
-    flip_vertial(end_row, num_cols_b, col, b_ptr);
-  }
   // printf("%s", "after: \n");
   // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   // test_flip(temp, b_ptr, size);
   
 
-  // if (num_cols_b > THRESHOLD) { 
-  //   #pragma omp parallel 
-  //   {
-  //     #pragma omp for
-  //     for (int col = 0; col < num_cols_b; col++) { 
-  //       int end = ((num_rows_b - 1) * num_cols_b) + col;
-  //       int start = col;
-  //       while (start < end) { 
-  //         int32_t temp = b_ptr[end];
-  //         b_ptr[end] = b_ptr[start];
-  //         b_ptr[start] = temp;
-  //         start += num_cols_b;
-  //         end -= num_cols_b;
-  //       }
-  //     }
-  //   }
-  // } else { 
-  //   int col = 0;
-  //   for (; col < num_cols_b; col++) { 
-  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
-  //   }
+  if (num_cols_b > THRESHOLD) { 
+    #pragma omp parallel 
+    {
+      #pragma omp for
+      for (int col = 0; col < num_cols_b; col++) { 
+        int end = ((num_rows_b - 1) * num_cols_b) + col;
+        int start = col;
+        while (start < end) { 
+          int32_t temp = b_ptr[end];
+          b_ptr[end] = b_ptr[start];
+          b_ptr[start] = temp;
+          start += num_cols_b;
+          end -= num_cols_b;
+        }
+      }
+    }
+  } else { 
+    int col = 0;
+    for (; col < num_cols_b; col++) { 
+      flip_vertial(end_row, num_cols_b, col, b_ptr);
+    }
 
-  // }
+  }
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
