@@ -114,12 +114,13 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
     start_ptr += num_col;
   }
 }
-void naive_solution(int32_t* res, uint32_t num_rows_b, uint32_t num_cols_a, uint32_t num_cols_b, uint32_t num_rows_a, uint32_t col_diff) { 
+void naive_solution(int32_t* res, int32_t* a_ptr, int32_t* b_ptr, uint32_t num_rows_b, uint32_t num_cols_a, uint32_t num_cols_b, uint32_t num_rows_a, uint32_t col_diff) { 
   uint32_t row_a = 0;
   uint32_t col = 0;
   int index = 0;
   int32_t local;
   int b_ptr_index;
+  uint32_t row;
 
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
@@ -221,7 +222,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *res;
 
   res = malloc(sizeof(int32_t) * size_of_res);
-  int32_t temp* = malloc(sizeof(int32_t) * size_of_res);
+  int32_t* temp = malloc(sizeof(int32_t) * size_of_res);
   for (int h = 0; h < size_of_res; h++) {
     temp[h] = res[h];
   }
