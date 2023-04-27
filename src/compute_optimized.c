@@ -87,8 +87,8 @@ void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) {
     start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
     end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
 
-    start_vec = _mm256_permutevar8x32_epi32(vector1, order_vector);
-    end_vec = _mm256_permutevar8x32_epi32(vector2, order_vector);
+    start_vec = _mm256_permutevar8x32_epi32(start_vec, order_vector);
+    end_vec = _mm256_permutevar8x32_epi32(end_vec, order_vector);
 
     _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
     _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
