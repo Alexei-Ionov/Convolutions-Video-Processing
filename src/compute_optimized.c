@@ -114,41 +114,41 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
     start_ptr += num_col;
   }
 }
-void naive_solution(int32_t* res, int32_t* a_ptr, int32_t* b_ptr, uint32_t num_rows_b, uint32_t num_cols_a, uint32_t num_cols_b, uint32_t num_rows_a, uint32_t col_diff) { 
-  uint32_t row_a = 0;
-  uint32_t col = 0;
-  int index = 0;
-  int32_t local;
-  int b_ptr_index;
-  uint32_t row;
+// void naive_solution(int32_t* res, int32_t* a_ptr, int32_t* b_ptr, uint32_t num_rows_b, uint32_t num_cols_a, uint32_t num_cols_b, uint32_t num_rows_a, uint32_t col_diff) { 
+//   uint32_t row_a = 0;
+//   uint32_t col = 0;
+//   int index = 0;
+//   int32_t local;
+//   int b_ptr_index;
+//   uint32_t row;
 
-  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-    col = 0;
-    for (; col <= col_diff; col++) { 
-      row = 0;
-      local = 0;
-      int row_a2 = row_a;
-      b_ptr_index = 0;
-      for (; row < num_rows_b; row++) {
-        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-        row_a2 += 1;
-        b_ptr_index += num_cols_b;
-      }
-      res[index] = local;
-      index += 1;
-    }
-  }
-}
-// Computes the convolution of two matrices
-bool check_solution(int32_t* res, int32_t* temp, uint32_t size) { 
+//   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
+//     col = 0;
+//     for (; col <= col_diff; col++) { 
+//       row = 0;
+//       local = 0;
+//       int row_a2 = row_a;
+//       b_ptr_index = 0;
+//       for (; row < num_rows_b; row++) {
+//         local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+//         row_a2 += 1;
+//         b_ptr_index += num_cols_b;
+//       }
+//       res[index] = local;
+//       index += 1;
+//     }
+//   }
+// }
+// // Computes the convolution of two matrices
+// bool check_solution(int32_t* res, int32_t* temp, uint32_t size) { 
 
-  for (int i = 0; i < size; i++) { 
-    if (res[i] != temp[i]) {  
-      return false;
-    }
-  }
-  return true;
-}
+//   for (int i = 0; i < size; i++) { 
+//     if (res[i] != temp[i]) {  
+//       return false;
+//     }
+//   }
+//   return true;
+// }
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
   // output_matrix
@@ -221,7 +221,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     for (; col < num_cols_b; col++) { 
       flip_vertial(end_row, num_cols_b, col, b_ptr);
     }
-
   }
   
   uint32_t row_diff = num_rows_a - num_rows_b;
