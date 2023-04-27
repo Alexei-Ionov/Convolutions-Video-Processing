@@ -249,7 +249,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
             int val = dot(num_cols_b, &(a_ptr[((row_a + start) * num_cols_a) + col]), &(b_ptr[start]));
             #pragma omp critical 
             local += val;
-            
           }
         }
         int left_over = 8 * num_rows_b;
