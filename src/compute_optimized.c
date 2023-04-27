@@ -224,25 +224,47 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int index = 0;
   int32_t local;
   int b_ptr_index;
+  uint32_t row_a2; 
   
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     int col = 0;
     for (; col <= col_diff; col++) { 
       //row = 0
+      b_ptr_index = 0; 
+      row_a2 = row_a;
       local = 0;
-      int row_a2 = row_a;
-      b_ptr_index = 0;
       if (num_rows_b > 0) { 
         #pragma omp parallel 
         { 
-          #pragma omp for reduction(+:local, row_a2, b_ptr_index)
-          for (int row = 0; row < num_rows_b; row++) { 
-            int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-            local += val;
-            row_a2 += 1;
-            b_ptr_index += num_cols_b;
-          }
           
+          int thread_num = omp_get_num_thread();
+          int num_threads = omp_get_num_threads();
+          int work = num_rows_b / num_threads;
+          int start = thread_num * num_rows_b;
+          int finish = start + work; 
+          if (finish > num_rows_b) { 
+            finish = num_rows_b;
+          }
+          for (; start < finish; start++) { 
+            int val = dot(num_cols_b, &(a_ptr[((row_a + start) * num_cols_a) + col]), &(b_ptr[start]));
+            #pragma omp critical { 
+              local += val;
+            }
+          }
+
+          // #pragma omp for reduction(+:local, row_a2, b_ptr_index)
+          // for (int row = 0; row < num_rows_b; row++) { 
+          //   int val = dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+          //   local += val;
+          //   row_a2 += 1;
+          //   b_ptr_index += num_cols_b;
+          // }
+        }
+        int left_over = 8 * num_rows_b;
+        for (; left_over < num_rows_b; left_over++) {
+          local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
+          row_a2 += 1;
+          b_ptr_index += num_cols_b;
         }
       } else { 
         int row = 0;
