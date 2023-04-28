@@ -60,14 +60,11 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *b_ptr = b_matrix->data;
  
  
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
   int row = 0;
   for (;row < num_rows_b; row++) { 
     flip_horizontal(row, num_cols_b, b_ptr); 
   }
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
-
   int col = 0;
   int end_row = num_rows_b - 1;
 
