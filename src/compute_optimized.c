@@ -118,8 +118,10 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
 
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
    // TODO: convolve matrix 
-  matrix_t *output = (matrix_t *) malloc(sizeof(matrix_t));
-  //(*output_matrix) = (matrix_t *) malloc(sizeof(matrix_t));
+  // TODO: convolve matrix a and matrix b, and store the resulting matrix in
+  // output_matrix
+
+  matrix_t *output = malloc(sizeof(matrix_t));
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
   uint32_t num_cols_b = b_matrix-> cols;
@@ -127,54 +129,100 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
+   int end_row = num_rows_b - 1;
  
+  for (int row = 0; row < num_rows_b; row++) { 
+    flip_horizontal_naive(row, num_cols_b, b_ptr);
+  }
+  for (int col = 0; col < num_cols_b; col++) { 
+     flip_vertial(end_row, num_cols_b, col, b_ptr);
+  }  
  
-
-  int row = 0;
-  for (;row < num_rows_b; row++) { 
-    flip_horizantal_SIMD(row, num_cols_b, &(b_ptr[row * num_cols_b]));
-  }
-  int col = 0;
-  int end_row = num_rows_b - 1;
-
-  for (; col < num_cols_b; col++) { 
-    flip_vertial(end_row, num_cols_b, col, b_ptr);
-  }
-  
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
   uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
+  res = malloc(sizeof(int32_t) * size_of_res);
+  uint32_t num_threads = 8;
 
-  res = (int32_t *) malloc(sizeof(int32_t) * size_of_res);
-  
-  uint32_t row_a = 0;
-  col = 0;
-  int index = 0;
-  int32_t local;
-  int b_ptr_index;
-
-  for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-    col = 0;
-    for (; col <= col_diff; col++) { 
-      row = 0;
-      local = 0;
-      int row_a2 = row_a;
-      b_ptr_index = 0;
-      for (; row < num_rows_b; row++) {
-        local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-        row_a2 += 1;
-        b_ptr_index += num_cols_b;
+  if (row_diff >= 7) { 
+    #pragma omp parallel 
+    {
+      int thread_num = omp_get_thread_num();
+      int num_threads = omp_get_num_threads();
+      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      uint32_t start = work * thread_num;
+      uint32_t finish = start + work;
+      
+      if (finish > (row_diff + 1)) {
+        finish = row_diff + 1;
       }
-      res[index] = local;
-      index += 1;
+      for (; start < finish; start++) {
+        uint32_t col = 0;
+        for (; col <= col_diff; col++) { 
+          uint32_t b_ptr_index = 0; 
+          int32_t local = 0;
+          uint32_t row = 0; 
+          uint32_t a_ptr_index = start * num_cols_a;
+          for (; row < num_rows_b; row++) {
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            b_ptr_index += num_cols_b;
+            a_ptr_index += num_cols_a;
+            
+          }
+          res[(start * (col_diff + 1)) + col] = local;
+        }   
+      }
+    }
+    uint32_t leftover = ((row_diff + 1) / 8) * 8;
+    for (; leftover < row_diff + 1; leftover++) {
+      uint32_t col = 0;
+      for (; col <= col_diff; col++) { 
+        uint32_t b_ptr_index = 0; 
+        int32_t local = 0;
+        uint32_t row = 0; 
+        uint32_t a_ptr_index = leftover * num_cols_a;
+        for (; row < num_rows_b; row++) {
+          local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+          b_ptr_index += num_cols_b;
+          a_ptr_index += num_cols_a;
+        }
+        res[(leftover * (col_diff + 1)) + col] = local;
+      }   
+    }
+  } else { 
+    #pragma omp parallel num_threads(row_diff + 1)
+    {
+      int thread_num = omp_get_thread_num();
+      int num_threads = omp_get_num_threads();
+      uint32_t work = (row_diff + 1) / num_threads;           //might not divide perfectly so need to do manual work afterword
+      uint32_t start = work * thread_num;
+      uint32_t finish = start + work;
+      
+      if (finish > (row_diff + 1)) {
+        finish = row_diff + 1;
+      }
+      for (; start < finish; start++) {
+        uint32_t col = 0;
+        for (; col <= col_diff; col++) { 
+          uint32_t b_ptr_index = 0; 
+          int32_t local = 0;
+          uint32_t row = 0; 
+          uint32_t a_ptr_index = start * num_cols_a;
+          for (; row < num_rows_b; row++) {
+            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+            b_ptr_index += num_cols_b;
+            a_ptr_index += num_cols_a;
+          }
+          res[(start * (col_diff + 1)) + col] = local;
+        }   
+      }
     }
   }
+  output->data = res;
   output->cols = col_diff + 1;
   output->rows = row_diff + 1;
-  output->data = res;
   (*output_matrix) = output;
-
   return 0;
 }
   
