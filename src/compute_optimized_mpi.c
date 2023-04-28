@@ -6,14 +6,14 @@
 #define REQ_DIFF 8
 #define NUM_THREADS 8
 // Computes the dot product of vec1 and vec2, both of size n
-void print_matrix(int32_t* matrix, uint32_t rows, uint32_t cols) {
-    for (uint32_t i = 0; i < rows; i++) {
-        for (uint32_t j = 0; j < cols; j++) {
-            printf("%d ", *(matrix + i * cols + j));
-        }
-        printf("\n");
-    }
-}
+// void print_matrix(int32_t* matrix, uint32_t rows, uint32_t cols) {
+//     for (uint32_t i = 0; i < rows; i++) {
+//         for (uint32_t j = 0; j < cols; j++) {
+//             printf("%d ", *(matrix + i * cols + j));
+//         }
+//         printf("\n");
+//     }
+// }
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
   int end_ptr = (row * num_col) + num_col - 1;
   int start_ptr = (row * num_col);
@@ -131,6 +131,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   uint32_t end_row = num_rows_b - 1;
   uint32_t row = 0;
+  
  
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
