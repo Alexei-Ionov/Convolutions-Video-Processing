@@ -2,9 +2,8 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include "compute.h"
-#define THRESHOLD 40
+#define THRESHOLD 64
 #define OFFSET 8
-#define MAX(a,b) (((a)>(b))?(a):(b))
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
@@ -25,7 +24,6 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   for (; j < n; j++) { 
     final += (vec1[j] * vec2[j]);
   }
-
   int32_t temp[8];
   _mm256_storeu_si256((__m256i *) temp, res);
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
@@ -44,58 +42,6 @@ void flip_horizontal_naive(int row, int num_col, int32_t *b) {
     start_ptr += 1;
   }
 }
-
-
-void flip_horizantal_optimized(uint32_t size, int32_t *row_ptr) { 
-  uint32_t half = size / 2;
-  #pragma omp parallel for 
-  for (uint32_t index = 0; index < half; index++) { 
-    int32_t temp = row_ptr[index];
-    row_ptr[index] = row_ptr[size - index - 1];
-    row_ptr[size - index - 1] = temp;
-  }
-}
-
-  // n == half size of the arrray
-  // int furthest_completed = (n / 8) * 8;
-  // int end = 2 * n;
-  // for (int i = 0; i < end; i++) { 
-  //   printf("%d", row_ptr[i]);
-  //   printf("%s", " ");
-  // }
-  // printf("%s", "\n");
-
-  
-  // #pragma omp parallel 
-  // {
-  //   int thread_num = omp_get_thread_num(); 
-  //   int num_threads = omp_get_num_threads();
-  //   int work = (n / num_threads);
-    
-  //   int start = thread_num * work;
-  //   int finish = start + work;
-    
-  //   if (finish > n) { 
-  //     finish = n;
-  //   }
-  //   for (; start <= finish; start++) { 
-  //     int diff = n - start;
-  //     int temp = row_ptr[n + diff];
-  //     row_ptr[n + diff] = row_ptr[start];
-  //     row_ptr[start] = temp;
-  //   } 
-  // }
-  // for (; furthest_completed <= n; furthest_completed++) { 
-  //   int diff = n - furthest_completed;
-  //   int temp = row_ptr[n + diff];
-  //   row_ptr[n + diff] = row_ptr[furthest_completed];
-  //   row_ptr[furthest_completed] = temp;  
-  // }
-  // for (int i = 0; i < end; i++) { 
-  //   printf("%d", row_ptr[i]);
-  //   printf("%s", " ");
-  // }
-
 
 void flip_vertial(int row, int num_col, int col, int32_t *b) {
   int start_ptr = col;
@@ -126,41 +72,15 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *b_ptr = b_matrix->data;
  
  
-  // print_matrix(b_ptr, num_rows_b, num_cols_b);
 
-  
-  
-  // boost performance by multithreading
   int end_row = num_rows_b - 1;
-  // for (int row = 0; row < num_rows_b; row++) { 
-  //   if (num_cols_b > 0) { 
-  //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
-  //   } else { 
-  //     flip_horizontal_naive(row, num_cols_b, b_ptr);
-  //   }
-  // }
-  // for (int col = 0; col < num_cols_b; col++) { 
-  //   flip_vertial(end_row, num_cols_b, col, b_ptr);
-  // }
+ 
   for (int row = 0; row < num_rows_b; row++) { 
     flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
   for (int col = 0; col < num_cols_b; col++) { 
      flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
-
-  // #pragma omp parallel 
-  // {
-  //   #pragma omp for
-  //   for (int row = 0; row < num_rows_b; row++) { 
-  //     flip_horizantal_optimized(num_cols_b, &(b_ptr[row]));
-  //   }
-  //   #pragma omp barrier
-  //   #pragma omp for 
-  //   for (int col = 0; col < num_cols_b; col++) { 
-  //     flip_vertial(end_row, num_cols_b, col, b_ptr);
-  //   }
-  // }
   
   uint32_t row_diff = num_rows_a - num_rows_b;
   uint32_t col_diff = num_cols_a - num_cols_b;
@@ -176,26 +96,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t local;
   int b_ptr_index;
 
-  // for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
-  //   col = 0;
-  //   for (; col <= col_diff; col++) { 
-      
-  //     local = 0;
-  //     int row_a2 = row_a;
-  //     b_ptr_index = 0;
-  //     #pragma omp parallel 
-  //     { 
-  //       #pragma omp for reduction(+:local,row_a2,b_ptr_index)  
-  //         local += dot(num_cols_b, &(a_ptr[(row_a2 * num_cols_a) + col]), &(b_ptr[b_ptr_index]));
-  //         row_a2 += 1;
-  //         b_ptr_index += num_cols_b;
-  
-  //     }
-      
-  //   }
-  //   res[index] = local;
-  //   index += 1;
-  // }
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
     for (; col <= col_diff; col++) { 
