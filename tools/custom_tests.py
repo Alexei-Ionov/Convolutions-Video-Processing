@@ -9,11 +9,12 @@ def test_example(test: TestSpec):
 
 @Test(seed=61)
 def custom_tests(test: TestSpec):
-    for i in range(2, 5):
-        rows_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
-        cols_a = randint(math.floor(1.25**i), math.floor(1.25 ** (i + 1)))
-        rows_b = randint(math.floor(rows_a / 4), math.floor(rows_a / 2))
-        cols_b = randint(math.floor(cols_a / 4), math.floor(cols_a / 2))
+    test.add_task(Task(Matrix.random(1000, 1000), Matrix.random(10, 10)))
+    for _ in range(500):
+        rows_a = randint(50, 100)
+        cols_a = randint(50, 100)
+        rows_b = randint(25, 50)
+        cols_b = randint(25, 50)
         test.add_task(
             Task(Matrix.random(rows_a, cols_a), Matrix.random(rows_b, cols_b))
         )
