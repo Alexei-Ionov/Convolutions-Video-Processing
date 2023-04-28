@@ -28,7 +28,37 @@ int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   _mm256_storeu_si256((__m256i *) temp, res);
 return (int) (final + temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7]);
 }
+void flip_horizantal_SIMD(int row, int num_cols, int32_t *row_ptr) { 
+  int start = row * num_cols;
+  int end = (row * num_cols) + num_cols - 8; //-8 for size of SIMD loads
+  __m256i start_vec, end_vec, order_vector;
+  int cut_off = num_cols / 16;
+  order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
+  while (end - start >= REQ_DIFF) { 
+    start_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + start));
+    end_vec = _mm256_loadu_si256 ((__m256i const *) (row_ptr + end));
 
+    start_vec = _mm256_permutevar8x32_epi32(start_vec, order_vector);
+    end_vec = _mm256_permutevar8x32_epi32(end_vec, order_vector);
+
+    _mm256_storeu_si256 ((__m256i*) (row_ptr + start), end_vec);
+    _mm256_storeu_si256 ((__m256i*) (row_ptr + end), start_vec);
+    start += 8;
+    if (end - start < 16) { 
+      end -= 1;
+      break;
+    }
+    end -= 8;
+  }
+  int32_t temp;
+  while (start < end) { 
+    temp = row_ptr[end];
+    row_ptr[end] = row_ptr[start];
+    row_ptr[start] = temp;
+    start += 1;
+    end -= 1;
+  }
+}
 
 void flip_horizontal_naive(int row, int num_col, int32_t *b) { 
   int end_ptr = (row * num_col) + num_col - 1;
@@ -76,7 +106,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int end_row = num_rows_b - 1;
  
   for (int row = 0; row < num_rows_b; row++) { 
-    flip_horizontal_naive(row, num_cols_b, b_ptr);
+    flip_horizantal_SIMD(row, num_cols_b, b_ptr);
+    //flip_horizontal_naive(row, num_cols_b, b_ptr);
   }
   for (int col = 0; col < num_cols_b; col++) { 
      flip_vertial(end_row, num_cols_b, col, b_ptr);
