@@ -118,10 +118,7 @@ void flip_vertial(int row, int num_col, int col, int32_t *b) {
 
 int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   // TODO: convolve matrix a and matrix b, and store the resulting matrix in
-  // output_matrix
-
-
-  
+  // output_matrix  
   uint32_t num_cols_a = a_matrix-> cols;
   uint32_t num_rows_a = a_matrix-> rows;
   uint32_t num_cols_b = b_matrix-> cols;
@@ -130,7 +127,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
   if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) { 
-    return -1; 
+    return 0; 
   }
   matrix_t *output = malloc(sizeof(matrix_t));
  
