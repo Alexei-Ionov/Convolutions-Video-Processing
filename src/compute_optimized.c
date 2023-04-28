@@ -126,10 +126,16 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
+  matrix_t *output = malloc(sizeof(matrix_t));
+
   if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) { 
+    res = malloc(sizeof(int32_t) * 0);
+    output->data = res;
+    output->cols = 0;
+    output->rows = 0;
+    (*output_matrix) = output;
     return 0; 
   }
-  matrix_t *output = malloc(sizeof(matrix_t));
  
  
   uint32_t end_row = num_rows_b - 1;
