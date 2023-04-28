@@ -151,11 +151,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   res = malloc(sizeof(int32_t) * size_of_res);
 
   uint32_t row_a = 0;
-  int col;
-  int row;
-  int index = 0;
+  uint32_t col;
+  uint32_t index = 0;
   int32_t local;
-  int b_ptr_index;
+  uint32_t b_ptr_index;
 
   for (;row_a + num_rows_b <= num_rows_a; row_a++) { 
     col = 0;
