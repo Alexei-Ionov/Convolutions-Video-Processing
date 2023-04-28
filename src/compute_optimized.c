@@ -3,7 +3,8 @@
 #include <immintrin.h>
 #include "compute.h"
 #define THRESHOLD 64
-#define OFFSET 8
+#define REQ_DIFF 8
+#define NUM_THREADS 8
 // Computes the dot product of vec1 and vec2, both of size n
 int dot(uint32_t n, int32_t *vec1, int32_t *vec2) {
   // TODO: implement dot product of vec1 and vec2, both of size n
