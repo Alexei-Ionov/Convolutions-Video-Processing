@@ -129,7 +129,10 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   matrix_t *output = malloc(sizeof(matrix_t));
   int32_t *res;
   if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) {
-    printf("%d", num_cols_a, num_cols_b, num_rows_a, num_rows_b);
+    printf("%d", num_rows_a);
+    printf("%d", num_cols_a);
+    printf("%d", num_rows_b);
+    printf("%d", num_cols_b);
     printf("%s", "\n");
     
     res = malloc(sizeof(int32_t) * 0);
