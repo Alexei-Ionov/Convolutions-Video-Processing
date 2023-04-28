@@ -127,20 +127,20 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
   matrix_t *output = malloc(sizeof(matrix_t));
+  uint32_t row_diff = num_rows_a - num_rows_b;
+  uint32_t col_diff = num_cols_a - num_cols_b;
+  uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
   int32_t *res;
-  if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) {
-    printf("%s", "matrix A:");
-    printf("%s", "\n");
-    print_matrix(a_ptr, num_rows_a, num_cols_a);
+  res = malloc(sizeof(int32_t) * size_of_res);
 
-    printf("%s", "matrix B:");
-    printf("%s", "\n");
-    print_matrix(b_ptr, num_rows_b, num_cols_b);
-    
-    res = malloc(sizeof(int32_t) * 0);
+  if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) {
+    for (int i = 0; i < size_of_res; i++) { 
+      res[i] = 0;
+    }
+  
     output->data = res;
-    output->cols = 0;
-    output->rows = 0;
+    output->cols = col_diff + 1;
+    output->rows = row_diff + 1;
     (*output_matrix) = output;
     return 0; 
   }
@@ -206,10 +206,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
     }
   }
   
-  uint32_t row_diff = num_rows_a - num_rows_b;
-  uint32_t col_diff = num_cols_a - num_cols_b;
-  uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
-  res = malloc(sizeof(int32_t) * size_of_res);
+
   uint32_t num_threads = 8;
 
   if (row_diff >= 7) { 
