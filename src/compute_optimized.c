@@ -104,7 +104,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
  
 
-  int end_row = num_rows_b - 1;
+  uint32_t end_row = num_rows_b - 1;
+  uint32_t row = 0;
  
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
