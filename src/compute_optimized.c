@@ -109,8 +109,8 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
  
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
-      int start = row * num_cols_b;
-      int end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
+      uint32_t start = row * num_cols_b;
+      uint32_t end = (row * num_cols_b) + num_cols_b - 8; //-8 for size of SIMD loads
       __m256i start_vec, end_vec, order_vector;
       order_vector = _mm256_set_epi32 (0, 1, 2, 3, 4, 5, 6, 7);
       while (end - start >= REQ_DIFF) { 
