@@ -202,47 +202,20 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
   uint32_t leftover = ((row_diff + 1) / total_num_threads) * total_num_threads;
   
   if (leftover) { 
-    if (leftover > 1) {               //only worth to multi thread if theres at least 2 sections that need to get worked on
-      #pragma omp parallel num_threads((row_diff + 1) - leftover)
-      {
-        uint32_t b_ptr_index; 
-        int32_t local;
-        uint32_t a_ptr_index;
-        uint32_t col = 0; 
-        int thread_num = omp_get_thread_num();
-        uint32_t start = leftover + thread_num;
-        for (; col <= col_diff; col++) { 
-          b_ptr_index = 0; 
-          local = 0;
-          row = 0; 
-          a_ptr_index = start * num_cols_a;
-          for (; row < num_rows_b; row++) {
-            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            b_ptr_index += num_cols_b;
-            a_ptr_index += num_cols_a;
-          }
-          res[(start * (col_diff + 1)) + col] = local;
-        }   
-
-      }
-    } else { 
-        uint32_t col = 0;
-        uint32_t b_ptr_index; 
-        int32_t local;
-        uint32_t row; 
-        uint32_t a_ptr_index;
-        for (; col <= col_diff; col++) { 
-          b_ptr_index = 0; 
-          local = 0;
-          row = 0; 
-          a_ptr_index = leftover * num_cols_a;
-          for (; row < num_rows_b; row++) {
-            local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
-            b_ptr_index += num_cols_b;
-            a_ptr_index += num_cols_a;
-          }
-          res[(leftover * (col_diff + 1)) + col] = local;
-        }   
+    for (; leftover < row_diff + 1; leftover++) {
+      uint32_t col = 0;
+      for (; col <= col_diff; col++) { 
+        uint32_t b_ptr_index = 0; 
+        int32_t local = 0;
+        uint32_t row = 0; 
+        uint32_t a_ptr_index = leftover * num_cols_a;
+        for (; row < num_rows_b; row++) {
+          local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
+          b_ptr_index += num_cols_b;
+          a_ptr_index += num_cols_a;
+        }
+        res[(leftover * (col_diff + 1)) + col] = local;
+      }   
     }
   }
   
