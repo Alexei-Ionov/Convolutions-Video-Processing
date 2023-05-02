@@ -101,12 +101,27 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
   int32_t *a_ptr = a_matrix->data;
   int32_t *b_ptr = b_matrix->data;
- 
- 
+  uint32_t row_diff = num_rows_a - num_rows_b;
+  uint32_t col_diff = num_cols_a - num_cols_b;
+  uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
+  int32_t *res;
+  res = malloc(sizeof(int32_t) * size_of_res);
+
+  
+  if (num_cols_a <= 0 || num_cols_b <= 0 || num_rows_a <= 0 || num_rows_b <= 0) {
+    for (int i = 0; i < size_of_res; i++) { 
+      res[i] = 0;
+    }
+  
+    output->data = res;
+    output->cols = col_diff + 1;
+    output->rows = row_diff + 1;
+    (*output_matrix) = output;
+    return 0; 
+  }
 
   uint32_t end_row = num_rows_b - 1;
   uint32_t row = 0;
- 
   for (; row < num_rows_b; row++) { 
     if (num_cols_b >= THRESHOLD) { 
       uint32_t start = row * num_cols_b;
@@ -143,17 +158,12 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
      flip_vertial(end_row, num_cols_b, col, b_ptr);
   }
   
-  uint32_t row_diff = num_rows_a - num_rows_b;
-  uint32_t col_diff = num_cols_a - num_cols_b;
-  uint32_t size_of_res = (col_diff + 1) * (row_diff + 1);
-  int32_t *res;
-
-  res = malloc(sizeof(int32_t) * size_of_res);
-
+  int total_num_threads; 
   #pragma omp parallel 
   {
     int thread_num = omp_get_thread_num();
     int num_threads = omp_get_num_threads();
+    total_num_threads = num_threads;
     uint32_t work = (row_diff + 1) / num_threads; 
     uint32_t start = work * thread_num;
     uint32_t finish = start + work;
@@ -191,15 +201,19 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
       }   
     }
   }
-  uint32_t leftover = ((row_diff + 1) / 8) * 8;
+  uint32_t leftover = ((row_diff + 1) / total_num_threads) * total_num_threads;
+  uint32_t b_ptr_index;
+  int32_t local;
+  uint32_t row;
+  uint32_t a_ptr_index;
   if (leftover) { 
     for (; leftover < row_diff + 1; leftover++) {
       uint32_t col = 0;
       for (; col <= col_diff; col++) { 
-        uint32_t b_ptr_index = 0; 
-        int32_t local = 0;
-        uint32_t row = 0; 
-        uint32_t a_ptr_index = leftover * num_cols_a;
+        b_ptr_index = 0; 
+        local = 0;
+        row = 0; 
+        a_ptr_index = leftover * num_cols_a;
         for (; row < num_rows_b; row++) {
           local += dot(num_cols_b, &(a_ptr[a_ptr_index + col]), &(b_ptr[b_ptr_index]));
           b_ptr_index += num_cols_b;
