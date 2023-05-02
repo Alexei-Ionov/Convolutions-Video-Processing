@@ -208,11 +208,9 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
         uint32_t b_ptr_index; 
         int32_t local;
         uint32_t a_ptr_index;
-        uint32_t col; 
+        uint32_t col = 0; 
         int thread_num = omp_get_thread_num();
-        int num_threads = omp_get_num_threads();
         uint32_t start = leftover + thread_num;
-        uint32_t col = 0;
         for (; col <= col_diff; col++) { 
           b_ptr_index = 0; 
           local = 0;
@@ -228,6 +226,7 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
       }
     } else { 
+        uint32_t col = 0;
         uint32_t b_ptr_index; 
         int32_t local;
         uint32_t row; 
