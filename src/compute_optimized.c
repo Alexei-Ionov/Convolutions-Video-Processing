@@ -228,7 +228,6 @@ int convolve(matrix_t *a_matrix, matrix_t *b_matrix, matrix_t **output_matrix) {
 
       }
     } else { 
-        uint32_t col;
         uint32_t b_ptr_index; 
         int32_t local;
         uint32_t row; 
